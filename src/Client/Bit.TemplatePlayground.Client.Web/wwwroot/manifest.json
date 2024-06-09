@@ -35,8 +35,8 @@
             "url": "/terms"
         },
         {
-            "name": "EditProfile",
-            "url": "/edit-profile"
+            "name": "Profile",
+            "url": "/profile"
         }
     ]
 }

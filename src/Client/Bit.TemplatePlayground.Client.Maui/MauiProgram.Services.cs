@@ -21,7 +21,7 @@ public static partial class MauiProgram
 
         Uri.TryCreate(configuration.GetApiServerAddress(), UriKind.Absolute, out var apiServerAddress);
 
-        services.TryAddTransient(sp =>
+        services.TryAddSingleton(sp =>
         {
             var handler = sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler");
             HttpClient httpClient = new(handler)
@@ -31,10 +31,14 @@ public static partial class MauiProgram
             return httpClient;
         });
 
+        builder.Logging.AddConfiguration(configuration.GetSection("Logging"));
+
         if (BuildConfiguration.IsDebug())
         {
             builder.Logging.AddDebug();
         }
+
+        builder.Logging.AddConsole();
 
         if (OperatingSystem.IsWindows())
         {
@@ -43,10 +47,18 @@ public static partial class MauiProgram
 
         builder.Logging.AddEventSourceLogger();
 
+        
+
+        
         services.TryAddTransient<MainPage>();
         services.TryAddTransient<IStorageService, MauiStorageService>();
         services.TryAddSingleton<IBitDeviceCoordinator, MauiDeviceCoordinator>();
         services.TryAddTransient<IExceptionHandler, MauiExceptionHandler>();
+        services.TryAddTransient<IExternalNavigationService, MauiExternalNavigationService>();
+
+#if LocalHttpServerEnabled
+        services.AddSingleton<ILocalHttpServer>(sp => new MauiLocalHttpServer(services));
+#endif
 
 #if ANDROID
         services.AddClientMauiProjectAndroidServices();

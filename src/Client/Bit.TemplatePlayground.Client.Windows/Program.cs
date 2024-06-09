@@ -8,6 +8,7 @@ public partial class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        
         // https://github.com/velopack/velopack
         VelopackApp.Build().Run();
         var application = new App();

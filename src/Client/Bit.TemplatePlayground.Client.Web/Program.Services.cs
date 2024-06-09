@@ -1,5 +1,7 @@
-﻿using Bit.TemplatePlayground.Client.Web.Services;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Bit.TemplatePlayground.Client.Web.Services;
 
 namespace Bit.TemplatePlayground.Client.Web;
 
@@ -14,6 +16,8 @@ public static partial class Program
 
         configuration.AddClientConfigurations();
 
+        builder.Logging.AddConfiguration(configuration.GetSection("Logging"));
+
         Uri.TryCreate(configuration.GetApiServerAddress(), UriKind.RelativeOrAbsolute, out var apiServerAddress);
 
         if (apiServerAddress!.IsAbsoluteUri is false)
@@ -21,7 +25,8 @@ public static partial class Program
             apiServerAddress = new Uri(new Uri(builder.HostEnvironment.BaseAddress), apiServerAddress);
         }
 
-        services.TryAddTransient(sp => new HttpClient(sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler")) { BaseAddress = apiServerAddress });
+        services.TryAddSingleton(sp => new HttpClient(sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler")) { BaseAddress = apiServerAddress });
+
 
         services.AddClientWebProjectServices();
     }

@@ -1,5 +1,7 @@
-﻿using Bit.TemplatePlayground.Client.Core.Services.HttpMessageHandlers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Services;
+using Bit.TemplatePlayground.Client.Core.Services.HttpMessageHandlers;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -14,15 +16,18 @@ public static class IServiceCollectionExtensions
         services.TryAddSessioned<IPubSubService, PubSubService>();
         services.TryAddTransient<IAuthTokenProvider, ClientSideAuthTokenProvider>();
         services.TryAddTransient<IStorageService, BrowserStorageService>();
+        services.TryAddSingleton<ILocalHttpServer, NoopLocalHttpServer>();
+        services.TryAddTransient<IExternalNavigationService, DefaultExternalNavigationService>();
 
         services.TryAddKeyedTransient<DelegatingHandler, RequestHeadersDelegationHandler>("DefaultMessageHandler");
         services.TryAddTransient<AuthDelegatingHandler>();
         services.TryAddTransient<RetryDelegatingHandler>();
         services.TryAddTransient<ExceptionDelegatingHandler>();
-        services.TryAddScoped<HttpClientHandler>();
+        services.TryAddSessioned<HttpClientHandler>();
+        services.TryAddTransient<HtmlRenderer>();
 
-        services.AddScoped<AuthenticationStateProvider, AuthenticationManager>(); // Use 'Add' instead of 'TryAdd' to override the aspnetcore's default AuthenticationStateProvider.
-        services.TryAddScoped(sp => (AuthenticationManager)sp.GetRequiredService<AuthenticationStateProvider>());
+        services.AddSessioned<AuthenticationStateProvider, AuthenticationManager>(); // Use 'Add' instead of 'TryAdd' to override the aspnetcore's default AuthenticationStateProvider.
+        services.TryAddSessioned(sp => (AuthenticationManager)sp.GetRequiredService<AuthenticationStateProvider>());
 
         services.TryAddTransient<MessageBoxService>();
         services.TryAddTransient<LazyAssemblyLoader>();
@@ -73,5 +78,39 @@ public static class IServiceCollectionExtensions
         }
 
         return services;
+    }
+
+    /// <summary>
+    /// <inheritdoc cref="AddSessioned{TService, TImplementation}(IServiceCollection)"/>
+    /// </summary>
+    public static IServiceCollection TryAddSessioned<TService>(this IServiceCollection services, Func<IServiceProvider, TService> implementationFactory)
+        where TService : class
+    {
+        if (AppRenderMode.IsBlazorHybrid || OperatingSystem.IsBrowser())
+        {
+            services.TryAdd(ServiceDescriptor.Singleton(implementationFactory));
+        }
+        else
+        {
+            services.TryAdd(ServiceDescriptor.Scoped(implementationFactory));
+        }
+
+        return services;
+    }
+
+    /// <summary>
+    /// <inheritdoc cref="AddSessioned{TService, TImplementation}(IServiceCollection)"/>
+    /// </summary>
+    public static void TryAddSessioned<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(this IServiceCollection services)
+        where TService : class
+    {
+        if (AppRenderMode.IsBlazorHybrid || OperatingSystem.IsBrowser())
+        {
+            services.TryAddSingleton(typeof(TService), typeof(TService));
+        }
+        else
+        {
+            services.TryAddScoped(typeof(TService), typeof(TService));
+        }
     }
 }

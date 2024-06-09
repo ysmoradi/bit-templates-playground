@@ -1,11 +1,9 @@
 ﻿using Bit.TemplatePlayground.Client.Core.Controllers.Product;
-using Bit.TemplatePlayground.Server.Models.Products;
 using Bit.TemplatePlayground.Shared.Dtos.Products;
 
 namespace Bit.TemplatePlayground.Server.Controllers;
 
-[Route("api/[controller]/[action]")]
-[ApiController]
+[ApiController, Route("api/[controller]/[action]")]
 public partial class ProductController : AppControllerBase, IProductController
 {
     [HttpGet, EnableQuery]

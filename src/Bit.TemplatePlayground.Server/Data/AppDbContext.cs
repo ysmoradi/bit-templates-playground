@@ -20,7 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        ConfigIdentityTables(builder);
+        ConfigureIdentityTables(builder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -52,17 +52,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         // SQLite does not support expressions of type 'DateTimeOffset' in ORDER BY clauses. Convert the values to a supported type:
         configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetToBinaryConverter>();
         configurationBuilder.Properties<DateTimeOffset?>().HaveConversion<DateTimeOffsetToBinaryConverter>();
+
+        base.ConfigureConventions(configurationBuilder);
     }
 
-    private void ConfigIdentityTables(ModelBuilder builder)
+    private void ConfigureIdentityTables(ModelBuilder builder)
     {
-        //Config Asp Identity table name
-        builder.Entity<User>().ToTable("Users");
-        builder.Entity<Role>().ToTable("Roles");
-        builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
-        builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
-        builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
-        builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
-        builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+        builder.Entity<User>().ToTable("Users", "identity");
+        builder.Entity<Role>().ToTable("Roles", "identity");
+        builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles", "identity");
+        builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims", "identity");
+        builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins", "identity");
+        builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens", "identity");
+        builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims", "identity");
     }
 }
