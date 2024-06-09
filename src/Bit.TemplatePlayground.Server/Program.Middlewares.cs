@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
+using Microsoft.Net.Http.Headers;
 
 namespace Bit.TemplatePlayground.Server;
 
@@ -25,13 +26,13 @@ public static partial class Program
 
         if (AppRenderMode.MultilingualEnabled)
         {
-            var supportedCultures = CultureInfoManager.SupportedCultures.Select(sc => CultureInfoManager.CreateCultureInfo(sc.code)).ToArray();
+            var supportedCultures = CultureInfoManager.SupportedCultures.Select(sc => sc.Culture).ToArray();
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures,
                 ApplyCurrentCultureToResponseHeaders = true
-            }.SetDefaultCulture(CultureInfoManager.DefaultCulture.code));
+            }.SetDefaultCulture(CultureInfoManager.DefaultCulture.Name));
         }
 
         app.UseExceptionHandler("/", createScopeForErrors: true);
@@ -67,7 +68,7 @@ public static partial class Program
 
         // 0.0.0.0 origins are essential for the proper functioning of BlazorHybrid's WebView, while localhost:4030 is a prerequisite for BlazorWebAssemblyStandalone testing.
         app.UseCors(options => options.WithOrigins("https://0.0.0.0", "app://0.0.0.0", "http://localhost:4030")
-            .AllowAnyHeader().AllowAnyMethod());
+            .AllowAnyHeader().AllowAnyMethod().WithExposedHeaders(HeaderNames.RequestId));
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -172,8 +173,8 @@ public static partial class Program
 
                     var qs = HttpUtility.ParseQueryString(httpContext.Request.QueryString.Value ?? string.Empty);
                     qs.Remove("try_refreshing_token");
-                    var redirectUrl = UriHelper.BuildRelative(httpContext.Request.PathBase, httpContext.Request.Path, new QueryString(qs.ToString()));
-                    httpContext.Response.Redirect($"/not-authorized?redirect-url={redirectUrl}&isForbidden={(is403 ? "true" : "false")}");
+                    var returnUrl = UriHelper.BuildRelative(httpContext.Request.PathBase, httpContext.Request.Path, new QueryString(qs.ToString()));
+                    httpContext.Response.Redirect($"/not-authorized?return-url={returnUrl}&isForbidden={(is403 ? "true" : "false")}");
                 }
                 else if (httpContext.Response.StatusCode is 404 &&
                     httpContext.GetEndpoint() is null /* Please be aware that certain endpoints, particularly those associated with web API actions, may intentionally return a 404 error. */)

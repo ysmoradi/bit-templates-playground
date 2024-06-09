@@ -9,6 +9,16 @@
             "dotnetRunMessages": true,
             "applicationUrl": "http://localhost:5030"
         },
+        "Bit.TemplatePlayground.Server-Swagger": {
+            "commandName": "Project",
+            "launchBrowser": true,
+            "launchUrl": "swagger",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": true,
+            "applicationUrl": "http://localhost:5030"
+        },
         "Bit.TemplatePlayground.Server-BlazorWebAssembly": {
             "commandName": "Project",
             "launchBrowser": true,
@@ -22,7 +32,7 @@
         "WSL": {
             "commandName": "WSL2",
             "launchBrowser": true,
-            "launchUrl": "http://localhost:5030/swagger",
+            "launchUrl": "http://localhost:5030/",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "http://localhost:5030"
@@ -31,7 +41,7 @@
         "Docker": {
             "commandName": "SdkContainer",
             "launchBrowser": true,
-            "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+            "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
             "environmentVariables": {
                 "ASPNETCORE_HTTP_PORTS": "5030"
             },

@@ -3,8 +3,7 @@ using Bit.TemplatePlayground.Client.Core.Controllers.Dashboard;
 
 namespace Bit.TemplatePlayground.Server.Controllers;
 
-[Route("api/[controller]/[action]")]
-[ApiController]
+[ApiController, Route("api/[controller]/[action]")]
 public partial class DashboardController : AppControllerBase, IDashboardController
 {
     [HttpGet]

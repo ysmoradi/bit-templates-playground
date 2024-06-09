@@ -16,7 +16,7 @@ public static partial class Program
         services.TryAddTransient<IConfiguration>(sp => configuration);
 
         Uri.TryCreate(configuration.GetApiServerAddress(), UriKind.Absolute, out var apiServerAddress);
-        services.TryAddTransient(sp =>
+        services.TryAddSingleton(sp =>
         {
             var handler = sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler");
             HttpClient httpClient = new(handler)
@@ -35,15 +35,18 @@ public static partial class Program
         services.TryAddTransient<IStorageService, WindowsStorageService>();
         services.TryAddTransient<IBitDeviceCoordinator, WindowsDeviceCoordinator>();
         services.TryAddTransient<IExceptionHandler, WindowsExceptionHandler>();
+        services.AddSingleton<ILocalHttpServer>(sp => new WindowsLocalHttpServer(services));
 
         services.AddLogging(loggingBuilder =>
         {
+            loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
             loggingBuilder.AddEventLog();
             loggingBuilder.AddEventSourceLogger();
             if (BuildConfiguration.IsDebug())
             {
                 loggingBuilder.AddDebug();
             }
+            loggingBuilder.AddConsole();
         });
 
         services.AddClientCoreProjectServices();

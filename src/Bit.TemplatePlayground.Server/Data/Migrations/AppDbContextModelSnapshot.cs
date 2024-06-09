@@ -14,7 +14,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
             modelBuilder.Entity("Bit.TemplatePlayground.Server.Models.Categories.Category", b =>
                 {
@@ -91,7 +91,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles", "identity");
                 });
 
             modelBuilder.Entity("Bit.TemplatePlayground.Server.Models.Identity.User", b =>
@@ -110,14 +110,14 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("ConfirmationEmailRequestedOn")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("EmailTokenRequestedOn")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FullName")
@@ -140,6 +140,9 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
+                    b.Property<long?>("OtpRequestedOn")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
@@ -149,10 +152,13 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("PhoneNumberTokenRequestedOn")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ProfileImageName")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("ResetPasswordEmailRequestedOn")
+                    b.Property<long?>("ResetPasswordTokenRequestedOn")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
@@ -161,11 +167,18 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("TwoFactorTokenRequestedOn")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("Email IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -174,7 +187,11 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("Users", (string)null);
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("PhoneNumber IS NOT NULL");
+
+                    b.ToTable("Users", "identity");
 
                     b.HasData(
                         new
@@ -185,16 +202,18 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                             ConcurrencyStamp = "315e1a26-5b3a-4544-8e91-2760cd28e231",
                             Email = "test@bitplatform.dev",
                             EmailConfirmed = true,
+                            EmailTokenRequestedOn = 1306790461440000060L,
                             FullName = "Bit.TemplatePlayground test account",
                             Gender = 2,
                             LockoutEnabled = true,
                             NormalizedEmail = "TEST@BITPLATFORM.DEV",
-                            NormalizedUserName = "TEST@BITPLATFORM.DEV",
+                            NormalizedUserName = "TEST",
                             PasswordHash = "AQAAAAIAAYagAAAAEP0v3wxkdWtMkHA3Pp5/JfS+42/Qto9G05p2mta6dncSK37hPxEHa3PGE4aqN30Aag==",
-                            PhoneNumberConfirmed = false,
+                            PhoneNumber = "+31684207362",
+                            PhoneNumberConfirmed = true,
                             SecurityStamp = "959ff4a9-4b07-4cc1-8141-c5fc033daf83",
                             TwoFactorEnabled = false,
-                            UserName = "test@bitplatform.dev"
+                            UserName = "test"
                         });
                 });
 
@@ -233,7 +252,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
-                            CreatedOn = 1307416854528000060L,
+                            CreatedOn = 1307701739520000120L,
                             Description = "The Ford Mustang is ranked #1 in Sports Cars",
                             Name = "Mustang",
                             Price = 27155m
@@ -242,7 +261,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 2,
                             CategoryId = 1,
-                            CreatedOn = 1307408007168000060L,
+                            CreatedOn = 1307692892160000120L,
                             Description = "The Ford GT is a mid-engine two-seater sports car manufactured and marketed by American automobile manufacturer",
                             Name = "GT",
                             Price = 500000m
@@ -251,7 +270,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 3,
                             CategoryId = 1,
-                            CreatedOn = 1307390312448000060L,
+                            CreatedOn = 1307675197440000120L,
                             Description = "Ford Ranger is a nameplate that has been used on multiple model lines of pickup trucks sold by Ford worldwide.",
                             Name = "Ranger",
                             Price = 25000m
@@ -260,7 +279,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 4,
                             CategoryId = 1,
-                            CreatedOn = 1307381465088000060L,
+                            CreatedOn = 1307666350080000120L,
                             Description = "Raptor is a SCORE off-road trophy truck living in a asphalt world",
                             Name = "Raptor",
                             Price = 53205m
@@ -269,7 +288,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 5,
                             CategoryId = 1,
-                            CreatedOn = 1307372617728000060L,
+                            CreatedOn = 1307657502720000120L,
                             Description = "The Ford Maverick is a compact pickup truck produced by Ford Motor Company.",
                             Name = "Maverick",
                             Price = 22470m
@@ -278,7 +297,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 6,
                             CategoryId = 2,
-                            CreatedOn = 1307416854528000060L,
+                            CreatedOn = 1307701739520000120L,
                             Description = "A powerful convertible sports car",
                             Name = "Roadster",
                             Price = 42800m
@@ -287,7 +306,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 7,
                             CategoryId = 2,
-                            CreatedOn = 1307408007168000060L,
+                            CreatedOn = 1307692892160000120L,
                             Description = "A perfectly adequate family sedan with sharp looks",
                             Name = "Altima",
                             Price = 24550m
@@ -296,7 +315,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 8,
                             CategoryId = 2,
-                            CreatedOn = 1307390312448000060L,
+                            CreatedOn = 1307675197440000120L,
                             Description = "Legendary supercar with AWD, 4 seats, a powerful V6 engine and the latest tech",
                             Name = "GT-R",
                             Price = 113540m
@@ -305,7 +324,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 9,
                             CategoryId = 2,
-                            CreatedOn = 1307372617728000060L,
+                            CreatedOn = 1307657502720000120L,
                             Description = "A new smart SUV",
                             Name = "Juke",
                             Price = 28100m
@@ -314,7 +333,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 10,
                             CategoryId = 3,
-                            CreatedOn = 1307416854528000060L,
+                            CreatedOn = 1307701739520000120L,
                             Description = "",
                             Name = "H247",
                             Price = 54950m
@@ -323,7 +342,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 11,
                             CategoryId = 3,
-                            CreatedOn = 1307408007168000060L,
+                            CreatedOn = 1307692892160000120L,
                             Description = "",
                             Name = "V297",
                             Price = 103360m
@@ -332,7 +351,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 12,
                             CategoryId = 3,
-                            CreatedOn = 1307372617728000060L,
+                            CreatedOn = 1307657502720000120L,
                             Description = "",
                             Name = "R50",
                             Price = 2000000m
@@ -341,7 +360,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 13,
                             CategoryId = 4,
-                            CreatedOn = 1307416854528000060L,
+                            CreatedOn = 1307701739520000120L,
                             Description = "",
                             Name = "M550i",
                             Price = 77790m
@@ -350,7 +369,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 14,
                             CategoryId = 4,
-                            CreatedOn = 1307408007168000060L,
+                            CreatedOn = 1307692892160000120L,
                             Description = "",
                             Name = "540i",
                             Price = 60945m
@@ -359,7 +378,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 15,
                             CategoryId = 4,
-                            CreatedOn = 1307399159808000060L,
+                            CreatedOn = 1307684044800000120L,
                             Description = "",
                             Name = "530e",
                             Price = 56545m
@@ -368,7 +387,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 16,
                             CategoryId = 4,
-                            CreatedOn = 1307390312448000060L,
+                            CreatedOn = 1307675197440000120L,
                             Description = "",
                             Name = "530i",
                             Price = 55195m
@@ -377,7 +396,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 17,
                             CategoryId = 4,
-                            CreatedOn = 1307381465088000060L,
+                            CreatedOn = 1307666350080000120L,
                             Description = "",
                             Name = "M850i",
                             Price = 100045m
@@ -386,7 +405,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 18,
                             CategoryId = 4,
-                            CreatedOn = 1307372617728000060L,
+                            CreatedOn = 1307657502720000120L,
                             Description = "",
                             Name = "X7",
                             Price = 77980m
@@ -395,7 +414,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 19,
                             CategoryId = 4,
-                            CreatedOn = 1307363770368000060L,
+                            CreatedOn = 1307648655360000120L,
                             Description = "",
                             Name = "IX",
                             Price = 87000m
@@ -404,7 +423,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 20,
                             CategoryId = 5,
-                            CreatedOn = 1307416854528000060L,
+                            CreatedOn = 1307701739520000120L,
                             Description = "rapid acceleration and dynamic handling",
                             Name = "Model 3",
                             Price = 61990m
@@ -413,7 +432,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 21,
                             CategoryId = 5,
-                            CreatedOn = 1307408007168000060L,
+                            CreatedOn = 1307692892160000120L,
                             Description = "finishes near the top of our luxury electric car rankings.",
                             Name = "Model S",
                             Price = 135000m
@@ -422,7 +441,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 22,
                             CategoryId = 5,
-                            CreatedOn = 1307399159808000060L,
+                            CreatedOn = 1307684044800000120L,
                             Description = "Heart-pumping acceleration, long drive range",
                             Name = "Model X",
                             Price = 138890m
@@ -431,7 +450,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
                         {
                             Id = 23,
                             CategoryId = 5,
-                            CreatedOn = 1307372617728000060L,
+                            CreatedOn = 1307657502720000120L,
                             Description = "extensive driving range, lots of standard safety features",
                             Name = "Model Y",
                             Price = 67790m
@@ -474,7 +493,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", (string)null);
+                    b.ToTable("RoleClaims", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -496,7 +515,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", (string)null);
+                    b.ToTable("UserClaims", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
@@ -517,7 +536,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", (string)null);
+                    b.ToTable("UserLogins", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
@@ -532,7 +551,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -551,7 +570,7 @@ namespace Bit.TemplatePlayground.Server.Data.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", (string)null);
+                    b.ToTable("UserTokens", "identity");
                 });
 
             modelBuilder.Entity("Bit.TemplatePlayground.Server.Models.Products.Product", b =>

@@ -20,7 +20,7 @@ public partial class MainPage
 
         InitializeComponent();
 
-        pubSubService.Subscribe(PubSubMessages.PROFILE_UPDATED, async _ =>
+        pubSubService.Subscribe(PubSubMessages.USER_DATA_UPDATED, async _ =>
         {
             // It's an opportune moment to request a store review. (:
 
@@ -75,6 +75,7 @@ public partial class MainPage
                 }
             }
         }
+        catch (InvalidOperationException) when ((OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS()) && BuildConfiguration.IsDebug()) { }
         catch (FileNotFoundException) { }
     }
 }

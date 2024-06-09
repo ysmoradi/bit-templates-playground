@@ -1,11 +1,9 @@
 ﻿using Bit.TemplatePlayground.Client.Core.Controllers.Categories;
-using Bit.TemplatePlayground.Server.Models.Categories;
 using Bit.TemplatePlayground.Shared.Dtos.Categories;
 
 namespace Bit.TemplatePlayground.Server.Controllers;
 
-[Route("api/[controller]/[action]")]
-[ApiController]
+[ApiController, Route("api/[controller]/[action]")]
 public partial class CategoryController : AppControllerBase, ICategoryController
 {
     [HttpGet, EnableQuery]
