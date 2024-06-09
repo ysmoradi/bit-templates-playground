@@ -16,7 +16,7 @@
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.bit.templateplayground</ApplicationId>
-        <ApplicationIdGuid>BD048730-37E9-41DA-BB45-C05F756BEFF6</ApplicationIdGuid>
+        <ApplicationIdGuid>2159B3EC-55D9-438A-9D01-71DC96E694EB</ApplicationIdGuid>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -114,8 +114,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0-pre-04" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0-pre-04" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0" PrivateAssets="all" />
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
         <Content Remove="Properties\launchSettings.json" />

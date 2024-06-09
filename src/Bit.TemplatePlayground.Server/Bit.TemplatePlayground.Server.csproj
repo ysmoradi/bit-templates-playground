@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <UserSecretsId>41DA68EF-4AF9-47C4-B9A9-3FA801F5D23C</UserSecretsId>
+        <UserSecretsId>E4167350-5F95-4535-806B-C8EA2D0FA9CD</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0-pre-04" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0-pre-04" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
         <PackageReference Include="QRCoder" Version="1.5.1" />
     </ItemGroup>

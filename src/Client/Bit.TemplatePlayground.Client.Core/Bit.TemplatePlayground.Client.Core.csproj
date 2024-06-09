@@ -17,13 +17,13 @@
         <Content Remove="appsettings*.json" />
         <EmbeddedResource Include="appsettings*.json" />
 
-        <PackageReference Include="Bit.Butil" Version="8.9.0-pre-04" />
-        <PackageReference Include="Bit.BlazorUI" Version="8.9.0-pre-04" />
-        <PackageReference Include="Bit.BlazorUI.Icons" Version="8.9.0-pre-04" />
-        <PackageReference Include="Bit.BlazorUI.Assets" Version="8.9.0-pre-04" />
-        <PackageReference Include="Bit.BlazorUI.Extras" Version="8.9.0-pre-04" />
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0-pre-04" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0-pre-04" PrivateAssets="all" />
+        <PackageReference Include="Bit.Butil" Version="8.9.0" />
+        <PackageReference Include="Bit.BlazorUI" Version="8.9.0" />
+        <PackageReference Include="Bit.BlazorUI.Icons" Version="8.9.0" />
+        <PackageReference Include="Bit.BlazorUI.Assets" Version="8.9.0" />
+        <PackageReference Include="Bit.BlazorUI.Extras" Version="8.9.0" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.6" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
