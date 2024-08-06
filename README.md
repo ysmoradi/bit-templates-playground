@@ -8,11 +8,7 @@ Experience lightning-fast speeds and seamless integration as you dive into the w
 
 **Instructions:**
 
-1- Run `cd src/Bit.TemplatePlayground.Server && dotnet run` command in vscode terminal.
-
-2- Sign in using `test@bitplatform.dev` and `123456` and explorer admin panel features!
-
-Done!
+Hit F5 and sign in using `test@bitplatform.dev`, `123456` and explorer features.
 
 This sample project gets created by the following command:
 ```bash
