@@ -1,4 +1,4 @@
-﻿@page "/profile"
+﻿@attribute [Route(Urls.ProfilePage)]
 @inherits AppComponentBase
 
 <PageTitle>@Localizer[nameof(AppStrings.ProfileTitle)]</PageTitle>
@@ -24,6 +24,12 @@
 
     <div class="content-container email-panel">
         <ChangePhoneNumberSection PhoneNumber="@user?.PhoneNumber" Loading="isLoading" />
+    </div>
+
+    <br />
+
+    <div class="content-container sessions-panel">
+        <UserSessionsSection />
     </div>
 
     <br />

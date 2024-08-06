@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
-using Bit.TemplatePlayground.Client.Windows.Services;
 using Microsoft.Extensions.Logging;
+using Bit.TemplatePlayground.Client.Windows.Services;
+using Bit.TemplatePlayground.Client.Windows.Configuration;
 
 namespace Bit.TemplatePlayground.Client.Windows;
 
@@ -15,19 +16,19 @@ public static partial class Program
         var configuration = configurationBuilder.Build();
         services.TryAddTransient<IConfiguration>(sp => configuration);
 
-        Uri.TryCreate(configuration.GetApiServerAddress(), UriKind.Absolute, out var apiServerAddress);
+        Uri.TryCreate(configuration.GetServerAddress(), UriKind.Absolute, out var serverAddress);
         services.TryAddSingleton(sp =>
         {
             var handler = sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler");
             HttpClient httpClient = new(handler)
             {
-                BaseAddress = apiServerAddress
+                BaseAddress = serverAddress
             };
             return httpClient;
         });
 
         services.AddWpfBlazorWebView();
-        if (BuildConfiguration.IsDebug())
+        if (AppEnvironment.IsDev())
         {
             services.AddBlazorWebViewDeveloperTools();
         }
@@ -35,19 +36,23 @@ public static partial class Program
         services.TryAddTransient<IStorageService, WindowsStorageService>();
         services.TryAddTransient<IBitDeviceCoordinator, WindowsDeviceCoordinator>();
         services.TryAddTransient<IExceptionHandler, WindowsExceptionHandler>();
-        services.AddSingleton<ILocalHttpServer>(sp => new WindowsLocalHttpServer(services));
+        services.AddSingleton<ILocalHttpServer, WindowsLocalHttpServer>();
 
         services.AddLogging(loggingBuilder =>
         {
             loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
             loggingBuilder.AddEventLog();
             loggingBuilder.AddEventSourceLogger();
-            if (BuildConfiguration.IsDebug())
+            if (AppEnvironment.IsDev())
             {
                 loggingBuilder.AddDebug();
             }
             loggingBuilder.AddConsole();
         });
+
+        services.AddOptions<WindowsUpdateSettings>()
+            .Bind(configuration.GetRequiredSection(nameof(WindowsUpdateSettings)))
+            .ValidateOnStart();
 
         services.AddClientCoreProjectServices();
     }

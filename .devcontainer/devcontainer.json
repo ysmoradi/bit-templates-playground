@@ -1,34 +1,32 @@
 {
-    "name": "Bit Templates Playground",
+    "name": "Bit.TemplatePlayground",
     "hostRequirements": {
         "cpus": 4
     },
-    "onCreateCommand": "wget https://download.visualstudio.microsoft.com/download/pr/86497c4f-3dc8-4ee7-9f6a-9e0464059427/293d074c28bbfd9410f4db8e021fa290/dotnet-sdk-8.0.301-linux-x64.tar.gz -O $HOME/dotnet.tar.gz && export DOTNET_ROOT=$HOME/.dotnet && mkdir -p \"$DOTNET_ROOT\" && tar zxf $HOME/dotnet.tar.gz -C \"$DOTNET_ROOT\" && export PATH=$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH && dotnet dev-certs https --trust && sudo dotnet workload install wasm-tools wasm-experimental && dotnet tool install --global dotnet-ef --version 8.0.6 && dotnet ef database update --project src/Bit.TemplatePlayground.Server/Bit.TemplatePlayground.Server.csproj && dotnet build src/Client/Bit.TemplatePlayground.Client.Core/Bit.TemplatePlayground.Client.Core.csproj -t:InstallNodejsDependencies,BeforeBuildTasks --no-restore",
+    "onCreateCommand": "wget https://download.visualstudio.microsoft.com/download/pr/60218cc4-13eb-41d5-aa0b-5fd5a3fb03b8/6c42bee7c3651b1317b709a27a741362/dotnet-sdk-8.0.303-linux-x64.tar.gz -O $HOME/dotnet.tar.gz && export DOTNET_ROOT=$HOME/.dotnet && mkdir -p \"$DOTNET_ROOT\" && tar zxf $HOME/dotnet.tar.gz -C \"$DOTNET_ROOT\" && export PATH=$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH && dotnet dev-certs https --trust",
     "waitFor": "onCreateCommand",
     "customizations": {
         "codespaces": {
             "openFiles": [
-                "src/Client/Bit.TemplatePlayground.Client.Core/Components/Pages/HomePage.razor"
+                "README.md"
             ]
         },
         "vscode": {
             "extensions": [
-                "ms-dotnettools.vscode-dotnet-runtime",
+                "glenn2223.live-sass",
+                "ms-dotnettools.blazorwasm-companion",
                 "kevin-chatham.aspnetcorerazor-html-css-class-completion",
-                "ms-dotnettools.csharp",
-                "yy0931.vscode-sqlite3-editor",
-                "glenn2223.live-sass"
+                "DominicVonk.vscode-resx-editor",
+                "ms-dotnetools.csharp",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "yy0931.vscode-sqlite3-editor"
             ]
         }
     },
-    "portsAttributes": {
-        "5030": {
-            "label": "Api",
-            "onAutoForward": "openPreview"
-        }
-    },
     "forwardPorts": [
-        5030
+        4225,
+        5000,
+        5242
     ],
     "remoteEnv": {
         "ASPNETCORE_ENVIRONMENT": "Development"

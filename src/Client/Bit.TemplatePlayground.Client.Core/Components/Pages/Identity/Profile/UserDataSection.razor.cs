@@ -1,5 +1,5 @@
 ﻿using Bit.TemplatePlayground.Shared.Dtos.Identity;
-using Bit.TemplatePlayground.Client.Core.Controllers.Identity;
+using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Identity.Profile;
 
@@ -17,7 +17,7 @@ public partial class UserDataSection
     private readonly EditUserDto editUserDto = new();
 
     private string? message;
-    private BitSeverity messageSeverity;
+    private BitColor messageColor;
     private ElementReference messageRef = default!;
 
 
@@ -44,9 +44,9 @@ public partial class UserDataSection
 
         removeProfileImageHttpUrl = $"api/Attachment/RemoveProfileImage?access_token={access_token}";
 
-        var apiUri = Configuration.GetApiServerAddress();
-        profileImageUrl = $"{apiUri}/api/Attachment/GetProfileImage?access_token={access_token}";
-        profileImageUploadUrl = $"{apiUri}/api/Attachment/UploadProfileImage?access_token={access_token}";
+        var serverAddress = Configuration.GetServerAddress();
+        profileImageUrl = $"{serverAddress}/api/Attachment/GetProfileImage?access_token={access_token}";
+        profileImageUploadUrl = $"{serverAddress}/api/Attachment/UploadProfileImage?access_token={access_token}";
 
         await base.OnInitAsync();
     }
@@ -66,14 +66,14 @@ public partial class UserDataSection
 
             PublishUserDataUpdated();
 
-            messageSeverity = BitSeverity.Success;
+            messageColor = BitColor.Success;
             message = Localizer[nameof(AppStrings.ProfileUpdatedSuccessfullyMessage)];
             await messageRef.ScrollIntoView();
         }
         catch (KnownException e)
         {
             message = e.Message;
-            messageSeverity = BitSeverity.Error;
+            messageColor = BitColor.Error;
             await messageRef.ScrollIntoView();
         }
         finally
@@ -99,7 +99,7 @@ public partial class UserDataSection
         catch (KnownException e)
         {
             message = e.Message;
-            messageSeverity = BitSeverity.Error;
+            messageColor = BitColor.Error;
             await messageRef.ScrollIntoView();
         }
         finally
@@ -121,7 +121,7 @@ public partial class UserDataSection
         catch (KnownException e)
         {
             message = e.Message;
-            messageSeverity = BitSeverity.Error;
+            messageColor = BitColor.Error;
             await messageRef.ScrollIntoView();
         }
         finally

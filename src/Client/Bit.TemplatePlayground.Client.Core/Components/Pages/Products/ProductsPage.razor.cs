@@ -1,4 +1,4 @@
-﻿using Bit.TemplatePlayground.Client.Core.Controllers.Product;
+﻿using Bit.TemplatePlayground.Shared.Controllers.Product;
 using Bit.TemplatePlayground.Shared.Dtos.Products;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Products;

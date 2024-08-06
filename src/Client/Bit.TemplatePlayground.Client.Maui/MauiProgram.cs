@@ -3,7 +3,7 @@ using Maui.InAppReviews;
 using Maui.Android.InAppUpdates;
 using Microsoft.Maui.LifecycleEvents;
 using Bit.TemplatePlayground.Client.Core;
-#if IOS || MACCATALYST
+#if iOS || Mac
 using UIKit;
 using WebKit;
 using Foundation;
@@ -16,7 +16,12 @@ public static partial class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         
-        AppRenderMode.IsBlazorHybrid = true;
+        AppPlatform.IsBlazorHybrid = true;
+#if iOS
+        AppPlatform.IsIosOnMacOS = NSProcessInfo.ProcessInfo.IsiOSApplicationOnMac;
+#endif
+
+        AppPlatform.OSDescription = $"{DeviceInfo.Current.Manufacturer} {(AppPlatform.IsIosOnMacOS ? DevicePlatform.macOS : DeviceInfo.Current.Platform)} {DeviceInfo.Current.Version}";
 
         var builder = MauiApp.CreateBuilder();
 
@@ -79,13 +84,13 @@ public static partial class MauiProgram
         BlazorWebViewHandler.BlazorWebViewMapper.AppendToMapping("CustomBlazorWebViewMapper", static (handler, view) =>
         {
             var webView = handler.PlatformView;
-#if WINDOWS
+#if Windows
             if (AppInfo.Current.RequestedTheme == AppTheme.Dark)
             {
                 webView.DefaultBackgroundColor = Microsoft.UI.Colors.Black;
             }
 
-            if (BuildConfiguration.IsRelease())
+            if (AppEnvironment.IsDev() is false)
             {
                 webView.EnsureCoreWebView2Async()
                     .AsTask()
@@ -100,7 +105,7 @@ public static partial class MauiProgram
                     });
             }
 
-#elif IOS || MACCATALYST
+#elif iOS || Mac
             webView.NavigationDelegate = new CustomWKNavigationDelegate();
             webView.Configuration.AllowsInlineMediaPlayback = true;
 
@@ -108,7 +113,7 @@ public static partial class MauiProgram
             webView.ScrollView.Bounces = false;
             webView.Opaque = false;
 
-            if (BuildConfiguration.IsDebug())
+            if (AppEnvironment.IsDev())
             {
                 if ((DeviceInfo.Current.Platform == DevicePlatform.MacCatalyst && DeviceInfo.Current.Version >= new Version(13, 3))
                     || (DeviceInfo.Current.Platform == DevicePlatform.iOS && DeviceInfo.Current.Version >= new Version(16, 4)))
@@ -116,7 +121,7 @@ public static partial class MauiProgram
                     webView.SetValueForKey(NSObject.FromObject(true), new NSString("inspectable"));
                 }
             }
-#elif ANDROID
+#elif Android
             webView.SetBackgroundColor(Android.Graphics.Color.Transparent);
 
             webView.OverScrollMode = Android.Views.OverScrollMode.Never;
@@ -133,7 +138,7 @@ public static partial class MauiProgram
                 settings.JavaScriptCanOpenWindowsAutomatically =
                 settings.DomStorageEnabled = true;
 
-            if (BuildConfiguration.IsDebug())
+            if (AppEnvironment.IsDev())
             {
                 settings.MixedContentMode = Android.Webkit.MixedContentHandling.AlwaysAllow;
             }
@@ -141,9 +146,11 @@ public static partial class MauiProgram
             settings.BlockNetworkLoads = settings.BlockNetworkImage = false;
 #endif
         });
+
+        AppContext.SetSwitch("BlazorWebView.AndroidFireAndForgetAsync", isEnabled: true);
     }
 
-#if IOS || MACCATALYST
+#if iOS || Mac
     public class CustomWKNavigationDelegate : WKNavigationDelegate
     {
         public override void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, WKWebpagePreferences preferences, Action<WKNavigationActionPolicy, WKWebpagePreferences> decisionHandler)

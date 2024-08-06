@@ -1,4 +1,4 @@
-﻿using Bit.TemplatePlayground.Client.Core.Controllers.Dashboard;
+﻿using Bit.TemplatePlayground.Shared.Controllers.Dashboard;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Dashboard;
 

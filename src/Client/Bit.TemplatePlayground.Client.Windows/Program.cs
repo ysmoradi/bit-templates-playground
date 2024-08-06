@@ -1,4 +1,5 @@
 ﻿using Bit.TemplatePlayground.Client.Windows.Configuration;
+using Microsoft.Extensions.Options;
 using Velopack;
 
 namespace Bit.TemplatePlayground.Client.Windows;
@@ -18,7 +19,7 @@ public partial class Program
             try
             {
                 var services = await App.Current.Dispatcher.InvokeAsync(() => ((MainWindow)App.Current.MainWindow).BlazorWebView.Services);
-                var windowsUpdateSettings = services.GetRequiredService<IConfiguration>().GetSection("WindowsUpdateSettings")?.Get<WindowsUpdateSettings>();
+                var windowsUpdateSettings = services.GetRequiredService<IOptionsSnapshot<WindowsUpdateSettings>>().Value;
                 if (windowsUpdateSettings?.FilesUrl is null)
                 {
                     return;

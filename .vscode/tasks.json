@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "dotnet build",
+            "type": "shell",
+            "command": "dotnet build Bit.TemplatePlayground.Web.slnf -t:BeforeBuildTasks -m:1",
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        }
+    ]
+}
