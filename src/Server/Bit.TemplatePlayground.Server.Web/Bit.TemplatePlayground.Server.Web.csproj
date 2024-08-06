@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <UserSecretsId>04E442D2-190E-47D5-94D5-6F807AF6DEA6</UserSecretsId>
+        <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Bit.TemplatePlayground.Server.Api\Bit.TemplatePlayground.Server.Api.csproj" />
+        <ProjectReference Include="..\..\Client\Bit.TemplatePlayground.Client.Web\Bit.TemplatePlayground.Client.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Bit.TemplatePlayground.Shared.Enums" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="**\*.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.Designer','')).resx</DependentUpon>
+        </Compile>
+        <EmbeddedResource Update="**\*.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>%(Filename).Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <!--
+    https://learn.microsoft.com/en-us/dotnet/core/docker/publish-as-container
+    https://learn.microsoft.com/en-us/visualstudio/containers/container-msbuild-properties
+    -->
+    <PropertyGroup>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <EnableSdkContainerDebugging Condition="'$(Configuration)' == 'Debug'">True</EnableSdkContainerDebugging>
+    </PropertyGroup>
+
+</Project>

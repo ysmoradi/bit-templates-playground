@@ -1,5 +1,5 @@
 ﻿using Bit.TemplatePlayground.Shared.Dtos.Identity;
-using Bit.TemplatePlayground.Client.Core.Controllers.Identity;
+using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Identity.Profile;
 
@@ -81,7 +81,7 @@ public partial class TwoFactorSection
 
         try
         {
-            var response = await userController.TwoFactorAuth(request);
+            var response = await userController.TwoFactorAuth(request, CurrentCancellationToken);
 
             qrCode = response.QrCode;
             sharedKey = response.SharedKey;

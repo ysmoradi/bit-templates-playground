@@ -1,4 +1,4 @@
-﻿using Bit.TemplatePlayground.Client.Core.Controllers.Categories;
+﻿using Bit.TemplatePlayground.Shared.Controllers.Categories;
 using Bit.TemplatePlayground.Shared.Dtos.Categories;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Categories;
@@ -84,12 +84,12 @@ public partial class CategoriesPage
 
     private void CreateCategory()
     {
-        NavigationManager.NavigateTo("add-edit-category");
+        NavigationManager.NavigateTo(Urls.AddOrEditCategoryPage);
     }
 
     private void EditCategory(CategoryDto category)
     {
-        NavigationManager.NavigateTo($"add-edit-category/{category.Id}");
+        NavigationManager.NavigateTo($"{Urls.AddOrEditCategoryPage}/{category.Id}");
     }
 
     private async Task DeleteCategory(CategoryDto category)

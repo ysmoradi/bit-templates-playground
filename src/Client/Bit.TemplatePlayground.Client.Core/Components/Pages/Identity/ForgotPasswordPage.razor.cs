@@ -1,5 +1,5 @@
 ﻿using Bit.TemplatePlayground.Shared.Dtos.Identity;
-using Bit.TemplatePlayground.Client.Core.Controllers.Identity;
+using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Identity;
 
@@ -31,7 +31,7 @@ public partial class ForgotPasswordPage
             {
                 queryParams.Add("phoneNumber", model.PhoneNumber);
             }
-            var resetPasswordUrl = NavigationManager.GetUriWithQueryParameters("reset-password", queryParams);
+            var resetPasswordUrl = NavigationManager.GetUriWithQueryParameters(Urls.ResetPasswordPage, queryParams);
             NavigationManager.NavigateTo(resetPasswordUrl);
         }
         catch (KnownException e)

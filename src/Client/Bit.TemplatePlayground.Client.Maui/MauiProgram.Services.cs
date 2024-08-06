@@ -12,35 +12,45 @@ public static partial class MauiProgram
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+#if Android
+        services.AddClientMauiProjectAndroidServices();
+#elif iOS
+        services.AddClientMauiProjectIosServices();
+#elif Mac
+        services.AddClientMauiProjectMacCatalystServices();
+#elif Windows
+        services.AddClientMauiProjectWindowsServices();
+#endif
+
         services.AddMauiBlazorWebView();
 
-        if (BuildConfiguration.IsDebug())
+        if (AppEnvironment.IsDev())
         {
             services.AddBlazorWebViewDeveloperTools();
         }
 
-        Uri.TryCreate(configuration.GetApiServerAddress(), UriKind.Absolute, out var apiServerAddress);
+        Uri.TryCreate(configuration.GetServerAddress(), UriKind.Absolute, out var serverAddress);
 
         services.TryAddSingleton(sp =>
         {
             var handler = sp.GetRequiredKeyedService<DelegatingHandler>("DefaultMessageHandler");
             HttpClient httpClient = new(handler)
             {
-                BaseAddress = apiServerAddress
+                BaseAddress = serverAddress
             };
             return httpClient;
         });
 
         builder.Logging.AddConfiguration(configuration.GetSection("Logging"));
 
-        if (BuildConfiguration.IsDebug())
+        if (AppEnvironment.IsDev())
         {
             builder.Logging.AddDebug();
         }
 
         builder.Logging.AddConsole();
 
-        if (OperatingSystem.IsWindows())
+        if (AppPlatform.IsWindows)
         {
             builder.Logging.AddEventLog();
         }
@@ -56,19 +66,10 @@ public static partial class MauiProgram
         services.TryAddTransient<IExceptionHandler, MauiExceptionHandler>();
         services.TryAddTransient<IExternalNavigationService, MauiExternalNavigationService>();
 
-#if LocalHttpServerEnabled
-        services.AddSingleton<ILocalHttpServer>(sp => new MauiLocalHttpServer(services));
-#endif
-
-#if ANDROID
-        services.AddClientMauiProjectAndroidServices();
-#elif iOS
-        services.AddClientMauiProjectIosServices();
-#elif Mac
-        services.AddClientMauiProjectMacCatalystServices();
-#elif Windows
-        services.AddClientMauiProjectWindowsServices();
-#endif
+        if (AppPlatform.IsWindows || AppPlatform.IsMacOS)
+        {
+            services.AddSingleton<ILocalHttpServer, MauiLocalHttpServer>();
+        }
 
         services.AddClientCoreProjectServices();
     }

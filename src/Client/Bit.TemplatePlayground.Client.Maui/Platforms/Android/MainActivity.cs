@@ -13,8 +13,8 @@ namespace Bit.TemplatePlayground.Client.Maui.Platforms.Android;
                         // the following app links will be opened in app instead of browser if the app is installed on Android device.
                         DataPaths = ["/"],
                         DataPathPrefixes = [
-                            "/confirm", "/forgot-password","/profile", "/reset-password", "/sign-in", "/sign-up", "/not-authorized", "/not-found","/terms", "/about",
-                            "/add-edit-category", "/categories", "/dashboard", "/products",
+                            Urls.ConfirmPage, Urls.ForgotPasswordPage, Urls.ProfilePage, Urls.ResetPasswordPage, Urls.SignInPage, Urls.SignUpPage, Urls.NotAuthorizedPage, Urls.NotFoundPage, Urls.TermsPage, Urls.AboutPage,
+                            Urls.AddOrEditCategoryPage, Urls.CategoriesPage, Urls.DashboardPage, Urls.ProductsPage,
                             ],
                         AutoVerify = true,
                         Categories = [Intent.ActionView, Intent.CategoryDefault, Intent.CategoryBrowsable])]

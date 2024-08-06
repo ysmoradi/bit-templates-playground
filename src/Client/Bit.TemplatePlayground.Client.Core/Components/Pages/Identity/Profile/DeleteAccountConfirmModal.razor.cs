@@ -1,4 +1,4 @@
-﻿using Bit.TemplatePlayground.Client.Core.Controllers.Identity;
+﻿using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Identity.Profile;
 
@@ -21,7 +21,7 @@ public partial class DeleteAccountConfirmModal
     {
         await userController.Delete(CurrentCancellationToken);
 
-        await AuthenticationManager.SignOut();
+        await AuthenticationManager.SignOut(CurrentCancellationToken);
 
         await CloseModal();
     }

@@ -1,4 +1,4 @@
-﻿@page "/confirm"
+﻿@attribute [Route(Urls.ConfirmPage)]
 @inherits AppComponentBase
 
 <PageTitle>@Localizer[nameof(AppStrings.ConfirmTitle)]</PageTitle>
@@ -8,7 +8,7 @@
         <div @ref="messageRef" class="form-message-bar">
             @if (string.IsNullOrEmpty(errorMessage) is false)
             {
-                <BitMessage Multiline Severity="BitSeverity.Error" OnDismiss="() => errorMessage = null">
+                <BitMessage Multiline Color="BitColor.Error" OnDismiss="() => errorMessage = null">
                     @errorMessage
                 </BitMessage>
             }
@@ -67,7 +67,7 @@
                         <br />
                         <BitButton IsLoading="isWaiting"
                                    ButtonType="BitButtonType.Button"
-                                   ButtonStyle="BitButtonStyle.Standard"
+                                   Variant="BitVariant.Outline"
                                    OnClick="WrapHandled(ResendEmailToken)">
                             @Localizer[nameof(AppStrings.ResendEmailTokenButtonText)]
                         </BitButton>
@@ -82,7 +82,7 @@
                             @Localizer[nameof(AppStrings.EmailConfirmationSuccessMessage)]
                         </BitTypography>
                         <br />
-                        <BitLink Href="/sign-in">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
+                        <BitLink Href="@Urls.SignInPage">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
                     }
                 </BitPivotItem>
             }
@@ -131,7 +131,7 @@
                         <br />
                         <BitButton IsLoading="isWaiting"
                                    ButtonType="BitButtonType.Button"
-                                   ButtonStyle="BitButtonStyle.Standard"
+                                   Variant="BitVariant.Outline"
                                    OnClick="WrapHandled(ResendPhoneToken)">
                             @Localizer[nameof(AppStrings.ResendPhoneTokenButtonText)]
                         </BitButton>
@@ -146,7 +146,7 @@
                             @Localizer[nameof(AppStrings.PhoneConfirmationSuccessMessage)]
                         </BitTypography>
                         <br />
-                        <BitLink Href="/sign-in">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
+                        <BitLink Href="@Urls.SignInPage">@Localizer[nameof(AppStrings.SignIn)]</BitLink>
                     }
                 </BitPivotItem>
             }

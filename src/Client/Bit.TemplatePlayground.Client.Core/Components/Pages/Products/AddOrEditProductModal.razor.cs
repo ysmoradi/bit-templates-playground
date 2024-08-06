@@ -1,5 +1,5 @@
-﻿using Bit.TemplatePlayground.Client.Core.Controllers.Categories;
-using Bit.TemplatePlayground.Client.Core.Controllers.Product;
+﻿using Bit.TemplatePlayground.Shared.Controllers.Categories;
+using Bit.TemplatePlayground.Shared.Controllers.Product;
 using Bit.TemplatePlayground.Shared.Dtos.Products;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Products;
@@ -29,7 +29,7 @@ public partial class AddOrEditProductModal
         {
             isOpen = true;
             product = productToShow;
-            selectedCategoyId = (product.CategoryId ?? 0).ToString();
+            selectedCategoyId = (product.CategoryId ?? default).ToString();
 
             StateHasChanged();
         });
@@ -64,7 +64,7 @@ public partial class AddOrEditProductModal
 
         try
         {
-            if (product.Id == 0)
+            if (product.Id == default)
             {
                 await productController.Create(product, CurrentCancellationToken);
             }

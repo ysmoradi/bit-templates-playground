@@ -16,7 +16,7 @@
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.bit.templateplayground</ApplicationId>
-        <ApplicationIdGuid>2159B3EC-55D9-438A-9D01-71DC96E694EB</ApplicationIdGuid>
+        <ApplicationIdGuid>04E442D2-190E-47D5-94D5-6F807AF6DEA6</ApplicationIdGuid>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -26,9 +26,6 @@
         <UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 
         <NoWarn>$(NoWarn);ClassWithoutModifierAnalyzer</NoWarn>
-
-        <LocalHttpServerEnabled Condition="$(TargetFramework.Contains('-windows'))">true</LocalHttpServerEnabled>
-        <DefineConstants Condition="'$(LocalHttpServerEnabled)' == 'true'">$(DefineConstants);LocalHttpServerEnabled</DefineConstants>
 
         <ResolveStaticWebAssetsInputsDependsOn>
             BeforeBuildTasks;
@@ -40,17 +37,16 @@
         <EnableLLVM>true</EnableLLVM>
         <RuntimeIdentifiers Condition="'$(AndroidPackageFormat)' == 'apk'">android-arm64</RuntimeIdentifiers>
         <MauiUseDefaultAotProfile Condition="Exists('custom.aprof')">false</MauiUseDefaultAotProfile>
-        <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
-    </PropertyGroup>
+                <AndroidStripILAfterAOT>true</AndroidStripILAfterAOT>
+            </PropertyGroup>
 
     <PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
         <EnableSGenConc>True</EnableSGenConc>
     </PropertyGroup>
 
     <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
-        <UseInterpreter>True</UseInterpreter>
-        <PublishAot>false</PublishAot>
-    </PropertyGroup>
+                <MtouchInterpreter>-all</MtouchInterpreter>
+            </PropertyGroup>
 
     <!-- Build Properties must be defined within these property groups to ensure successful publishing
        to the Mac App Store. See: https://aka.ms/maui-publish-app-store#define-build-properties-in-your-project-file -->
@@ -61,9 +57,8 @@
     <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Configuration)' == 'Release'">
         <CodesignEntitlements>Platforms/MacCatalyst/Entitlements.Release.plist</CodesignEntitlements>
         <UseHardenedRuntime>true</UseHardenedRuntime>
-        <UseInterpreter>True</UseInterpreter>
-        <PublishAot>false</PublishAot>
-    </PropertyGroup>
+                <MtouchInterpreter>-all</MtouchInterpreter>
+            </PropertyGroup>
 
 
     <ItemGroup Condition="$(TargetFramework.Contains('-android'))">
@@ -79,16 +74,13 @@
         <BundleResource Include="Platforms\iOS\PrivacyInfo.xcprivacy" LogicalName="PrivacyInfo.xcprivacy" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(LocalHttpServerEnabled)' == 'true'">
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
-
     <ItemGroup>
 
         <Using Include="Microsoft.AspNetCore.Components.WebView.Maui" />
         <Using Include="Bit.TemplatePlayground.Client.Core.Components.Layout" />
         <Using Include="Bit.TemplatePlayground.Client.Core.Services.Contracts" />
         <Using Include="Bit.TemplatePlayground.Client.Core.Services" />
+        <Using Include="Bit.TemplatePlayground.Shared" />
         <Watch Remove="*.scss" />
     </ItemGroup>
 
@@ -114,8 +106,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.9.0" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.9.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0-pre-05" PrivateAssets="all" />
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
         <Content Remove="Properties\launchSettings.json" />
@@ -126,10 +118,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
-        <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.40" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.40" />
+        <PackageReference Include="EmbedIO" Version="3.5.2" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.71" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.71" />
+        <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.71" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.71" />
         <PackageReference Include="Oscore.Maui.Android.InAppUpdates" Version="1.1.0" />
         <PackageReference Include="Oscore.Maui.AppStoreInfo" Version="1.0.7" />
         <PackageReference Include="Oscore.Maui.InAppReviews" Version="1.0.0" />
@@ -137,11 +130,19 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventSource" Version="8.0.0" />
+            </ItemGroup>
+
+    <ItemGroup>
+        <IsolatedScssFiles Include="**\*.razor.scss" />
     </ItemGroup>
 
     <Target Name="BeforeBuildTasks" AfterTargets="CoreCompile">
         <Error Text="Enable long paths in Windows. https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=powershell#enable-long-paths-in-windows-10-version-1607-and-later" Condition=" $([MSBuild]::IsOSPlatform('windows')) AND $([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem', 'LongPathsEnabled', null, RegistryView.Registry64)) != '1' " />
-        <Exec Command="../Bit.TemplatePlayground.Client.Core/node_modules/.bin/sass .:. --style compressed --load-path=. --update" StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
+        <CallTarget Targets="BuildIsolatedScssFiles" />
+    </Target>
+
+    <Target Name="BuildIsolatedScssFiles" Inputs="@(IsolatedScssFiles)" Outputs="@(IsolatedScssFiles->Replace('.scss', '.css'))">
+        <Exec Command="../Bit.TemplatePlayground.Client.Core/node_modules/.bin/sass .:. --style compressed --load-path=." StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 
 </Project>
