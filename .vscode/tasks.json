@@ -4,7 +4,7 @@
         {
             "label": "dotnet build",
             "type": "shell",
-            "command": "dotnet build Bit.TemplatePlayground.Web.slnf -t:BeforeBuildTasks -m:1",
+            "command": "dotnet build src/Client/Bit.TemplatePlayground.Client.Core/Bit.TemplatePlayground.Client.Core.csproj -t:BeforeBuildTasks",
             "runOptions": {
                 "runOn": "folderOpen"
             }
