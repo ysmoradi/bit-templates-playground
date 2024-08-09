@@ -18,7 +18,8 @@
                 "DominicVonk.vscode-resx-editor",
                 "ms-dotnetools.csharp",
                 "ms-dotnettools.vscode-dotnet-runtime",
-                "yy0931.vscode-sqlite3-editor"
+                "yy0931.vscode-sqlite3-editor",
+                "ms-dotnettools.csharp"
             ]
         }
     },
