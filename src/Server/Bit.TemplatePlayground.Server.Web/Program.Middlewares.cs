@@ -110,11 +110,11 @@ public static partial class Program
             QueryStringParameter = queryStringParameter
         }).WithTags("Test");
 
+
         app.MapControllers().RequireAuthorization();
 
         app.UseSiteMap();
-
-
+        
         // Handle the rest of requests with blazor
         var blazorApp = app.MapRazorComponents<Components.App>()
             .AddInteractiveServerRenderMode()

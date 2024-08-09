@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        <CoreCompileDependsOn>PrepareResources;$(CompileDependsOn)</CoreCompileDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,8 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0-pre-05" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
@@ -23,7 +24,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="System.Text.Json" Version="8.0.4" />
         <PackageReference Include="Riok.Mapperly" Version="3.6.0" PrivateAssets="all" ExcludeAssets="runtime">
-          <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
@@ -39,9 +40,23 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.Designer','')).resx</DependentUpon>
         </Compile>
-        <EmbeddedResource Update="**\*.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>%(Filename).Designer.cs</LastGenOutput>
+        <EmbeddedResource Update="Resources\AppStrings.resx">
+            <Generator>MSBuild:Compile</Generator>
+            <LastGenOutput>Resources\AppStrings.Designer.cs</LastGenOutput>
+            <StronglyTypedFileName>$(IntermediateOutputPath)\AppStrings.Designer.cs</StronglyTypedFileName>
+            <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+            <StronglyTypedNamespace>Bit.TemplatePlayground.Shared.Resources</StronglyTypedNamespace>
+            <StronglyTypedClassName>AppStrings</StronglyTypedClassName>
+            <PublicClass>true</PublicClass>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\IdentityStrings.resx">
+            <Generator>MSBuild:Compile</Generator>
+            <LastGenOutput>Resources\IdentityStrings.Designer.cs</LastGenOutput>
+            <StronglyTypedFileName>$(IntermediateOutputPath)\IdentityStrings.Designer.cs</StronglyTypedFileName>
+            <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+            <StronglyTypedNamespace>Bit.TemplatePlayground.Shared.Resources</StronglyTypedNamespace>
+            <StronglyTypedClassName>IdentityStrings</StronglyTypedClassName>
+            <PublicClass>true</PublicClass>
         </EmbeddedResource>
     </ItemGroup>
 

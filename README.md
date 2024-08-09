@@ -8,7 +8,7 @@ Experience lightning-fast speeds and seamless integration as you dive into the w
 
 **Instructions:**
 
-Hit F5 and sign in using `test@bitplatform.dev`, `123456` and explorer features.
+Run `cd src/Server/Bit.TemplatePlayground.Server.Web && dotnet run`, then sign-in using `test@bitplatform.dev`, `123456` and explorer features.
 
 This sample project gets created by the following command:
 ```bash

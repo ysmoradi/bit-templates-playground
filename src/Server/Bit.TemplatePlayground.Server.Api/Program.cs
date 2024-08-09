@@ -1,8 +1,4 @@
-﻿
-using System;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Bit.TemplatePlayground.Server.Api;
+﻿namespace Bit.TemplatePlayground.Server.Api;
 
 public static partial class Program
 {
@@ -17,7 +13,7 @@ public static partial class Program
         // The following line (using the * in the URL), allows the emulators and mobile devices to access the app using the host IP address.
         if (AppEnvironment.IsDev() && OperatingSystem.IsWindows())
         {
-            builder.WebHost.UseUrls("http://localhost:5242", "http://*:5242");
+            builder.WebHost.UseUrls("http://localhost:5286", "http://*:5286");
         }
 
         builder.ConfigureApiServices();

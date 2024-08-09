@@ -14,19 +14,19 @@
         "vscode": {
             "extensions": [
                 "glenn2223.live-sass",
-                "ms-dotnettools.blazorwasm-companion",
                 "kevin-chatham.aspnetcorerazor-html-css-class-completion",
                 "DominicVonk.vscode-resx-editor",
                 "ms-dotnetools.csharp",
                 "ms-dotnettools.vscode-dotnet-runtime",
-                "yy0931.vscode-sqlite3-editor"
+                "yy0931.vscode-sqlite3-editor",
+                "ms-dotnettools.csharp"
             ]
         }
     },
     "forwardPorts": [
         4225,
         5000,
-        5242
+        5286
     ],
     "remoteEnv": {
         "ASPNETCORE_ENVIRONMENT": "Development"

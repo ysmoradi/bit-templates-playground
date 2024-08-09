@@ -16,13 +16,13 @@
         <Content Remove="appsettings*.json" />
         <EmbeddedResource Include="appsettings*.json" />
 
-        <PackageReference Include="Bit.Butil" Version="8.10.0-pre-05" />
-        <PackageReference Include="Bit.BlazorUI" Version="8.10.0-pre-05" />
-        <PackageReference Include="Bit.BlazorUI.Icons" Version="8.10.0-pre-05" />
-        <PackageReference Include="Bit.BlazorUI.Assets" Version="8.10.0-pre-05" />
-        <PackageReference Include="Bit.BlazorUI.Extras" Version="8.10.0-pre-05" />
-                <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0-pre-05" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Bit.Butil" Version="8.10.0" />
+        <PackageReference Include="Bit.BlazorUI" Version="8.10.0" />
+        <PackageReference Include="Bit.BlazorUI.Icons" Version="8.10.0" />
+        <PackageReference Include="Bit.BlazorUI.Assets" Version="8.10.0" />
+        <PackageReference Include="Bit.BlazorUI.Extras" Version="8.10.0" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
@@ -46,18 +46,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Shared\Bit.TemplatePlayground.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="**\*.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.Designer','')).resx</DependentUpon>
-        </Compile>
-        <EmbeddedResource Update="**\*.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>%(Filename).Designer.cs</LastGenOutput>
-        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -86,7 +74,7 @@
         <Exec Command="node_modules/.bin/sass .:. --style compressed --load-path=." StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 
-    <Target Name="BuildGlobalScssFiles" Inputs="@(GlobalScssFiles)" Outputs="wwwroot/styles/app.css">        
+    <Target Name="BuildGlobalScssFiles" Inputs="@(GlobalScssFiles)" Outputs="wwwroot/styles/app.css">
         <Exec Command="node_modules/.bin/sass Styles/app.scss:wwwroot/styles/app.css --style compressed --load-path=." StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 

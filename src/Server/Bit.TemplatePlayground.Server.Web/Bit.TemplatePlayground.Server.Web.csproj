@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <UserSecretsId>04E442D2-190E-47D5-94D5-6F807AF6DEA6</UserSecretsId>
+        <UserSecretsId>0E552A17-2703-42AE-9828-B3720134675A</UserSecretsId>
         <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0-pre-05" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0-pre-05" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
     </ItemGroup>
 
@@ -19,18 +19,6 @@
 
     <ItemGroup>
         <Using Include="Bit.TemplatePlayground.Shared.Enums" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="**\*.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>$([System.String]::Copy('%(Filename)').Replace('.Designer','')).resx</DependentUpon>
-        </Compile>
-        <EmbeddedResource Update="**\*.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>%(Filename).Designer.cs</LastGenOutput>
-        </EmbeddedResource>
     </ItemGroup>
 
     <!--
