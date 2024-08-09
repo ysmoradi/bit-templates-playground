@@ -9,7 +9,6 @@ public partial class ProfilePage
     private UserDto? user;
     private bool isLoading;
 
-
     [AutoInject] private IUserController userController = default!;
 
 
@@ -28,4 +27,5 @@ public partial class ProfilePage
 
         await base.OnInitAsync();
     }
+
 }

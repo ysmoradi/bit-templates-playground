@@ -215,6 +215,7 @@ public partial class IdentityController : AppControllerBase, IIdentityController
         if (addUserSessionResult.Succeeded is false)
             throw new ResourceValidationException(addUserSessionResult.Errors.Select(e => new LocalizedString(e.Code, e.Description)).ToArray());
 
+
         return Empty;
     }
 
@@ -288,7 +289,7 @@ public partial class IdentityController : AppControllerBase, IIdentityController
             // Return 401 if refresh token is either invalid or expired.
             throw new UnauthorizedException();
         }
-        
+
         ((AppUserClaimsPrincipalFactory)userClaimsPrincipalFactory).SessionClaims.Add(new("session-id", currentSessionId.ToString()));
 
         var newPrincipal = await signInManager.CreateUserPrincipalAsync(user!);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Bit.TemplatePlayground.Server.Api.Services;
 using System.Net;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography.X509Certificates;
 using Bit.TemplatePlayground.Server.Api.Models.Identity;
 using Microsoft.OpenApi.Models;
@@ -56,8 +57,9 @@ public static partial class Program
         {
             builder.AddDefaultPolicy(policy =>
             {
-                // 0.0.0.0 origins are essential for the proper functioning of BlazorHybrid's WebView, while localhost:4225 is a prerequisite for BlazorWebAssemblyStandalone testing.
-                policy.WithOrigins("https://0.0.0.0", "app://0.0.0.0", string.IsNullOrEmpty(appSettings.WebClientUrl) ? "http://localhost:4225" : appSettings.WebClientUrl)
+                policy.SetIsOriginAllowed(origin => 
+                            LocalhostOriginRegex().IsMatch(origin) ||
+                            (string.IsNullOrEmpty(appSettings.WebClientUrl) is false && string.Equals(origin, appSettings.WebClientUrl, StringComparison.InvariantCultureIgnoreCase)))
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .WithExposedHeaders(HeaderNames.RequestId);
@@ -78,6 +80,7 @@ public static partial class Program
                     throw new ResourceValidationException(context.ModelState.Select(ms => (ms.Key, ms.Value!.Errors.Select(e => new LocalizedString(e.ErrorMessage, e.ErrorMessage)).ToArray())).ToArray());
                 };
             });
+
 
         services.AddPooledDbContextFactory<AppDbContext>(AddDbContext);
         services.AddDbContextPool<AppDbContext>(AddDbContext);
@@ -312,4 +315,10 @@ public static partial class Program
             });
         });
     }
+
+    /// <summary>
+    /// For either Blazor Hybrid web view or localhost in dev environment.
+    /// </summary>
+    [GeneratedRegex(@"^(http|https|app):\/\/(localhost|0\.0\.0\.0|127\.0\.0\.1)(:\d+)?(\/.*)?$")]
+    private static partial Regex LocalhostOriginRegex();
 }
