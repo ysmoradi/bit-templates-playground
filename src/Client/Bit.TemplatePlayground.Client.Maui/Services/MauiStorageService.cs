@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Client.Maui.Services;
 
-public class MauiStorageService : IStorageService
+public partial class MauiStorageService : IStorageService
 {
     private readonly Dictionary<string, string?> tempStorage = [];
 

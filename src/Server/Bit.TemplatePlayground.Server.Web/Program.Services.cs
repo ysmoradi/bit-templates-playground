@@ -1,5 +1,7 @@
-﻿using Microsoft.Net.Http.Headers;
+﻿using System.IO.Compression;
+using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.ResponseCompression;
 using Bit.TemplatePlayground.Server.Api;
 using Bit.TemplatePlayground.Client.Web;
 using Bit.TemplatePlayground.Server.Web.Services;
@@ -17,8 +19,6 @@ public static partial class Program
         var configuration = builder.Configuration;
 
         AddBlazor(builder);
-
-        services.AddHttpContextAccessor();
 
         builder.ConfigureApiServices();
 

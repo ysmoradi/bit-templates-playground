@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Dtos.Dashboard;
 
-public class OverallAnalyticsStatsDataResponseDto
+public partial class OverallAnalyticsStatsDataResponseDto
 {
     public int Last30DaysProductCount { get; set; }
 

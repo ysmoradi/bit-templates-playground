@@ -6,7 +6,7 @@ using Bit.TemplatePlayground.Server.Api.Data;
 
 namespace Bit.TemplatePlayground.Tests;
 
-public class AppTestServer : IAsyncDisposable
+public partial class AppTestServer : IAsyncDisposable
 {
     private TestServer? testServer;
     private WebApplication? webApp;

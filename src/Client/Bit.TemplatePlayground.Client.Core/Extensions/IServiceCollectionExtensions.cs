@@ -4,7 +4,7 @@ using Bit.TemplatePlayground.Client.Core.Services.HttpMessageHandlers;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class IServiceCollectionExtensions
+public static partial class IServiceCollectionExtensions
 {
     public static IServiceCollection AddClientCoreProjectServices(this IServiceCollection services)
     {

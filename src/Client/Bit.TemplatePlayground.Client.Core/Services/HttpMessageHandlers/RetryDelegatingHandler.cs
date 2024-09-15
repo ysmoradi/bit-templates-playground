@@ -3,7 +3,7 @@ using Bit.TemplatePlayground.Shared.Controllers;
 
 namespace Bit.TemplatePlayground.Client.Core.Services.HttpMessageHandlers;
 
-public class RetryDelegatingHandler(ExceptionDelegatingHandler handler)
+public partial class RetryDelegatingHandler(ExceptionDelegatingHandler handler)
     : DelegatingHandler(handler)
 {
 

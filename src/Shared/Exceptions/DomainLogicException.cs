@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Exceptions;
 
-public class DomainLogicException : KnownException
+public partial class DomainLogicException : KnownException
 {
     public DomainLogicException(string message)
         : base(message)

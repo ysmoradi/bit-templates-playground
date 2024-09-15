@@ -21,7 +21,7 @@ namespace Bit.TemplatePlayground.Client.Maui.Platforms.Android;
 
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleInstance,
     ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
-public class MainActivity : MauiAppCompatActivity
+public partial class MainActivity : MauiAppCompatActivity
 {
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -30,7 +30,7 @@ public class MainActivity : MauiAppCompatActivity
         var url = Intent?.DataString;
         if (string.IsNullOrWhiteSpace(url) is false)
         {
-            _ = Routes.OpenUniversalLink(new URL(url).File ?? "/");
+            _ = Routes.OpenUniversalLink(new URL(url).File ?? Urls.HomePage);
         }
     }
 
@@ -42,7 +42,7 @@ public class MainActivity : MauiAppCompatActivity
         var url = intent.DataString;
         if (action is Intent.ActionView && string.IsNullOrWhiteSpace(url) is false)
         {
-            _ = Routes.OpenUniversalLink(new URL(url).File ?? "/");
+            _ = Routes.OpenUniversalLink(new URL(url).File ?? Urls.HomePage);
         }
     }
 }

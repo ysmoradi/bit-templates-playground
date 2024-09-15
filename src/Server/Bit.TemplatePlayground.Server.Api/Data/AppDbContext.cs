@@ -7,7 +7,7 @@ using Bit.TemplatePlayground.Server.Api.Data.Configurations;
 
 namespace Bit.TemplatePlayground.Server.Api.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options)
+public partial class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<User, Role, Guid>(options), IDataProtectionKeyContext
 {
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }

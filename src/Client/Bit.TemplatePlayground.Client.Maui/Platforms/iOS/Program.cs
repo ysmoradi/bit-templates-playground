@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Client.Maui.Platforms.iOS;
 
-public class Program
+public partial class Program
 {
     static void Main(string[] args)
     {

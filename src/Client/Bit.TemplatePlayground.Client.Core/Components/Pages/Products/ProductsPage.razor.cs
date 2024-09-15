@@ -11,6 +11,7 @@ public partial class ProductsPage
     private bool isLoading;
     private AddOrEditProductModal? modal;
     private string productNameFilter = string.Empty;
+    private string categoryNameFilter = string.Empty;
 
     private ConfirmMessageBox confirmMessageBox = default!;
     private BitDataGrid<ProductDto>? dataGrid;
@@ -23,6 +24,16 @@ public partial class ProductsPage
         set
         {
             productNameFilter = value;
+            _ = RefreshData();
+        }
+    }
+
+    string CategoryNameFilter
+    {
+        get => categoryNameFilter;
+        set
+        {
+            categoryNameFilter = value;
             _ = RefreshData();
         }
     }
@@ -42,22 +53,24 @@ public partial class ProductsPage
 
             try
             {
-                // https://docs.microsoft.com/en-us/odata/concepts/queryoptions-overview
-                productController.AddQueryStrings(new ()
+                var odataQ = new ODataQuery
                 {
-                    { "$top", req.Count ?? 10 },
-                    { "$skip", req.StartIndex }
-                });
+                    Top = req.Count ?? 10,
+                    Skip = req.StartIndex,
+                    OrderBy = string.Join(", ", req.GetSortByProperties().Select(p => $"{p.PropertyName} {(p.Direction == BitDataGridSortDirection.Ascending ? "asc" : "desc")}"))
+                };
 
-                if (string.IsNullOrEmpty(productNameFilter) is false)
+                if (string.IsNullOrEmpty(ProductNameFilter) is false)
                 {
-                    productController.AddQueryString("$filter", $"contains(Name,'{productNameFilter}')");
+                    odataQ.Filter = $"contains(tolower({nameof(ProductDto.Name)}),'{ProductNameFilter.ToLower()}')";
                 }
 
-                if (req.GetSortByProperties().Any())
+                if (string.IsNullOrEmpty(CategoryNameFilter) is false)
                 {
-                    productController.AddQueryString("$orderby", string.Join(", ", req.GetSortByProperties().Select(p => $"{p.PropertyName} {(p.Direction == BitDataGridSortDirection.Ascending ? "asc" : "desc")}")));
+                    odataQ.AndFilter = $"contains(tolower({nameof(ProductDto.CategoryName)}),'{CategoryNameFilter.ToLower()}')";
                 }
+
+                productController.AddQueryString(odataQ.ToString());
 
                 var data = await productController.GetProducts(CurrentCancellationToken);
 

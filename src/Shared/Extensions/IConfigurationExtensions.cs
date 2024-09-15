@@ -1,5 +1,5 @@
 ﻿namespace Microsoft.Extensions.Configuration;
-public static class IConfigurationExtensions
+public static partial class IConfigurationExtensions
 {
     public static T GetRequiredValue<T>(this IConfiguration configuration, string name)
     {
@@ -22,5 +22,12 @@ public static class IConfigurationExtensions
         return Uri.TryCreate(serverAddress, UriKind.RelativeOrAbsolute, out _)
             ? serverAddress.TrimEnd('/')
             : throw new InvalidOperationException($"Api server address {serverAddress} is invalid");
+    }
+
+    public static string GetWebClientUrl(this IConfiguration configuration)
+    {
+        var webClientUrl = configuration.GetValue<string?>("WebClientUrl");
+
+        return string.IsNullOrEmpty(webClientUrl) is false ? webClientUrl : configuration.GetServerAddress();
     }
 }

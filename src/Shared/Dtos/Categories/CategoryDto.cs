@@ -1,7 +1,7 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Dtos.Categories;
 
 [DtoResourceType(typeof(AppStrings))]
-public class CategoryDto
+public partial class CategoryDto
 {
     public Guid Id { get; set; }
 

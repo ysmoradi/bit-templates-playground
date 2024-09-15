@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Dtos;
 
-public class PagedResult<T>
+public partial class PagedResult<T>
 {
     public T[] Items { get; set; } = [];
 

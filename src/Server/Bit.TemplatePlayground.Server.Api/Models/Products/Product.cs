@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Server.Api.Models.Products;
 
-public class Product
+public partial class Product
 {
     public Guid Id { get; set; }
 

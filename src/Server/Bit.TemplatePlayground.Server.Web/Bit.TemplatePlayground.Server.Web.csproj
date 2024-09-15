@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <UserSecretsId>0E552A17-2703-42AE-9828-B3720134675A</UserSecretsId>
+        <UserSecretsId>576F35E4-545E-4E95-9AB3-FF2FDC2F3F7C</UserSecretsId>
         <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.11.0-pre-08" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.11.0-pre-08" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
     </ItemGroup>
 
     <ItemGroup>

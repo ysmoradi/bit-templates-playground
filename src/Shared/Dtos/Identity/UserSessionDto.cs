@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Dtos.Identity;
 
-public class UserSessionDto
+public partial class UserSessionDto
 {
     public Guid SessionUniqueId { get; set; }
 

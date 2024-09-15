@@ -1,7 +1,7 @@
 ﻿
 namespace Bit.TemplatePlayground.Shared.Dtos.Identity;
 
-public class TokenResponseDto
+public partial class TokenResponseDto
 {
     public string? TokenType { get; set; }
 
