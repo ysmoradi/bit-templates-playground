@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Server.Api.Models.Categories;
 
-public class Category
+public partial class Category
 {
     public Guid Id { get; set; }
 

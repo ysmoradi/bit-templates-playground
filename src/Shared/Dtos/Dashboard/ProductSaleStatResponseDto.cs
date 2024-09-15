@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared.Dtos.Dashboard;
 
-public class ProductSaleStatResponseDto
+public partial class ProductSaleStatResponseDto
 {
     public string? ProductName { get; set; }
 

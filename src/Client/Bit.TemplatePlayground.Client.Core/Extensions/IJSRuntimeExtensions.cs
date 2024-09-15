@@ -2,7 +2,7 @@
 
 namespace Microsoft.JSInterop;
 
-public static class IJSRuntimeExtensions
+public static partial class IJSRuntimeExtensions
 {
     public static ValueTask<string> GetBrowserPlatform(this IJSRuntime jsRuntime)
     {

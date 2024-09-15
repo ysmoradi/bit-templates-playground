@@ -16,7 +16,7 @@
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.bit.templateplayground</ApplicationId>
-        <ApplicationIdGuid>0E552A17-2703-42AE-9828-B3720134675A</ApplicationIdGuid>
+        <ApplicationIdGuid>576F35E4-545E-4E95-9AB3-FF2FDC2F3F7C</ApplicationIdGuid>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -106,8 +106,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bit.CodeAnalyzers" Version="8.10.0" PrivateAssets="all" />
-        <PackageReference Include="Bit.SourceGenerators" Version="8.10.0" PrivateAssets="all" />
+        <PackageReference Include="Bit.CodeAnalyzers" Version="8.11.0-pre-08" PrivateAssets="all" />
+        <PackageReference Include="Bit.SourceGenerators" Version="8.11.0-pre-08" PrivateAssets="all" />
         <Content Remove="compilerconfig.json" />
         <None Include="compilerconfig.json" />
         <Content Remove="Properties\launchSettings.json" />
@@ -119,10 +119,10 @@
 
     <ItemGroup>
         <PackageReference Include="EmbedIO" Version="3.5.2" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80" />
-        <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.80" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.80" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.82" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.82" />
+        <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.82" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.82" />
         <PackageReference Include="Oscore.Maui.Android.InAppUpdates" Version="1.1.0" />
         <PackageReference Include="Oscore.Maui.AppStoreInfo" Version="1.0.7" />
         <PackageReference Include="Oscore.Maui.InAppReviews" Version="1.0.0" />
@@ -130,18 +130,15 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.EventSource" Version="8.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <IsolatedScssFiles Include="**\*.razor.scss" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <Target Name="BeforeBuildTasks" AfterTargets="CoreCompile">
         <Error Text="Enable long paths in Windows. https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=powershell#enable-long-paths-in-windows-10-version-1607-and-later" Condition=" $([MSBuild]::IsOSPlatform('windows')) AND $([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem', 'LongPathsEnabled', null, RegistryView.Registry64)) != '1' " />
-        <CallTarget Targets="BuildIsolatedScssFiles" />
+        <CallTarget Targets="BuildCssFiles" />
     </Target>
 
-    <Target Name="BuildIsolatedScssFiles" Inputs="@(IsolatedScssFiles)" Outputs="@(IsolatedScssFiles->Replace('.scss', '.css'))">
+    <Target Name="BuildCssFiles">
         <Exec Command="../Bit.TemplatePlayground.Client.Core/node_modules/.bin/sass .:. --style compressed --load-path=." StandardOutputImportance="high" StandardErrorImportance="high" LogStandardErrorAsError="true" />
     </Target>
 

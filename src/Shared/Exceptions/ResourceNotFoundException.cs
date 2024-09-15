@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Shared.Exceptions;
 
-public class ResourceNotFoundException : RestException
+public partial class ResourceNotFoundException : RestException
 {
     public ResourceNotFoundException()
         : base(nameof(AppStrings.ResourceNotFoundException))

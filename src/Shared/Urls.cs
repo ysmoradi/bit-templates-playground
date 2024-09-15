@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Shared;
 
-public static class Urls
+public static partial class Urls
 {
     public const string HomePage = "/";
 

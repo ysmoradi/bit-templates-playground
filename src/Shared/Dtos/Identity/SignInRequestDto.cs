@@ -2,7 +2,7 @@
 namespace Bit.TemplatePlayground.Shared.Dtos.Identity;
 
 [DtoResourceType(typeof(AppStrings))]
-public class SignInRequestDto : IdentityRequestDto
+public partial class SignInRequestDto : IdentityRequestDto
 {
     /// <example>123456</example>
     [Display(Name = nameof(AppStrings.Password))]

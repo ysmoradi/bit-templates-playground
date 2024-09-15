@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Shared.Exceptions;
 
-public class TooManyRequestsExceptions : RestException
+public partial class TooManyRequestsExceptions : RestException
 {
     public TooManyRequestsExceptions()
         : base(nameof(AppStrings.TooManyRequestsExceptions))

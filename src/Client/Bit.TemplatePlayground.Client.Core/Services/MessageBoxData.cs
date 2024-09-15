@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Client.Core.Services;
 
-public class MessageBoxData(string message, string title, TaskCompletionSource<bool> taskCompletionSource)
+public partial class MessageBoxData(string message, string title, TaskCompletionSource<bool> taskCompletionSource)
 {
     public string Message { get; set; } = message;
 

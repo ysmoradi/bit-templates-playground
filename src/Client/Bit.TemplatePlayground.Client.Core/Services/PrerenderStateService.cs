@@ -6,7 +6,7 @@ namespace Bit.TemplatePlayground.Client.Core.Services;
 /// <summary>
 /// For more information <see cref="IPrerenderStateService"/> docs.
 /// </summary>
-public class PrerenderStateService : IPrerenderStateService, IAsyncDisposable
+public partial class PrerenderStateService : IPrerenderStateService, IAsyncDisposable
 {
     private PersistingComponentStateSubscription? subscription;
     private readonly PersistentComponentState? persistentComponentState;

@@ -2,7 +2,7 @@
 
 namespace Bit.TemplatePlayground.Server.Api.Data.Configurations.Identity;
 
-public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+public partial class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {

@@ -298,6 +298,9 @@
     <data name="YouHaveToAcceptTerms" xml:space="preserve">
     <value>You must agree to our terms.</value>
   </data>
+    <data name="AcceptTermsMessage" xml:space="preserve">
+    <value>By signing up, you agree to our</value>
+  </data>
     <data name="Gender" xml:space="preserve">
     <value>Gender</value>
   </data>
@@ -360,6 +363,12 @@
   </data>
     <data name="Token" xml:space="preserve">
     <value>Token</value>
+  </data>
+    <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token.</value>
+  </data>
+    <data name="ExpiredToken" xml:space="preserve">
+    <value>Expired token.</value>
   </data>
     <data name="TokenPlaceholder" xml:space="preserve">
     <value>Enter token</value>
@@ -509,7 +518,7 @@
     <value>Haven’t you received the confirmation email?</value>
   </data>
     <data name="Or" xml:space="preserve">
-    <value>OR</value>
+    <value>Or</value>
   </data>
     <data name="ProfileImage" xml:space="preserve">
     <value>Profile Image</value>
@@ -798,6 +807,9 @@
   </data>
     <data name="SendOtpButtonText" xml:space="preserve">
     <value>Send OTP and Magic link</value>
+  </data>
+    <data name="OtpEmailOrPhoneNumberSubtitle" xml:space="preserve">
+    <value>Enter your email or phone number:</value>
   </data>
     <data name="EitherProvidePasswordOrOtp" xml:space="preserve">
     <value>Either provide password or OTP</value>

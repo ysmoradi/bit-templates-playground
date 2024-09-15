@@ -2,4 +2,4 @@
 
 namespace Bit.TemplatePlayground.Client.Windows.Services;
 
-public class WindowsDeviceCoordinator : IBitDeviceCoordinator { }
+public partial class WindowsDeviceCoordinator : IBitDeviceCoordinator { }

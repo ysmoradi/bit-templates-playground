@@ -1,6 +1,6 @@
 ﻿namespace Bit.TemplatePlayground.Client.Maui.Services;
 
-public class MauiExternalNavigationService : IExternalNavigationService
+public partial class MauiExternalNavigationService : IExternalNavigationService
 {
     public async Task NavigateToAsync(string url)
     {

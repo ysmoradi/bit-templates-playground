@@ -27,5 +27,4 @@ public partial class ProfilePage
 
         await base.OnInitAsync();
     }
-
 }

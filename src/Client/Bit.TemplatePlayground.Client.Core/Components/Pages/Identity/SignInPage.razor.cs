@@ -13,6 +13,7 @@ public partial class SignInPage
 
     private string? message;
     private BitColor messageColor;
+    private BitOtpInput otpInputRef = default!;
     private ElementReference messageRef = default!;
 
 
@@ -87,7 +88,7 @@ public partial class SignInPage
 
             if (requiresTwoFactor is false)
             {
-                NavigationManager.NavigateTo(ReturnUrlQueryString ?? "/", replace: true);
+                NavigationManager.NavigateTo(ReturnUrlQueryString ?? Urls.HomePage, replace: true);
             }
         }
         catch (KnownException e)
@@ -127,6 +128,7 @@ public partial class SignInPage
         finally
         {
             isSendingOtp = false;
+            await otpInputRef.FocusAsync();
         }
     }
 
