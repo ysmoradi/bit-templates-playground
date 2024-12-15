@@ -3,23 +3,29 @@ using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Services;
 
-public partial class AuthenticationManager : AuthenticationStateProvider
+public partial class AuthManager : AuthenticationStateProvider, IAsyncDisposable
 {
-    /// <summary>
-    /// To prevent multiple simultaneous refresh token requests.
-    /// </summary>
-    private readonly SemaphoreSlim semaphore = new(1, maxCount: 1);
+    private Action? unsubscribe;
 
     [AutoInject] private Cookie cookie = default!;
     [AutoInject] private IJSRuntime jsRuntime = default!;
+    [AutoInject] private PubSubService pubSubService = default!;
+    [AutoInject] private PromptService promptService = default!;
     [AutoInject] private IStorageService storageService = default!;
     [AutoInject] private IUserController userController = default!;
+    [AutoInject] private ILogger<AuthManager> authLogger = default!;
     [AutoInject] private IAuthTokenProvider tokenProvider = default!;
-    [AutoInject] private IPrerenderStateService prerenderStateService;
     [AutoInject] private IExceptionHandler exceptionHandler = default!;
     [AutoInject] private IStringLocalizer<AppStrings> localizer = default!;
     [AutoInject] private IIdentityController identityController = default!;
-    [AutoInject] private ILogger<AuthenticationManager> authLogger = default!;
+    [AutoInject] private IAuthorizationService authorizationService = default!;
+    [AutoInject] private IPrerenderStateService prerenderStateService = default!;
+
+    public void OnInit()
+    {
+        // Example for method call after object instantiation with dependency injection.
+
+    }
 
     /// <summary>
     /// Sign in and return whether the user requires two-factor authentication.
@@ -68,7 +74,7 @@ public partial class AuthenticationManager : AuthenticationStateProvider
         {
             await userController.SignOut(cancellationToken);
         }
-        catch (Exception exp) when (exp is ServerConnectionException or UnauthorizedException)
+        catch (Exception exp) when (exp is ServerConnectionException or UnauthorizedException or ResourceNotFoundException)
         {
             // The user might sign out while the app is offline, making token refresh attempts fail.
             // These exceptions are intentionally ignored in this case.
@@ -79,44 +85,53 @@ public partial class AuthenticationManager : AuthenticationStateProvider
         }
     }
 
-    public async Task<string?> RefreshToken(string requestedBy, CancellationToken cancellationToken)
+    /// <summary>
+    /// To prevent multiple simultaneous refresh token requests.
+    /// </summary>
+    private TaskCompletionSource<string?>? accessTokenTsc = null;
+
+    public Task<string?> RefreshToken(string requestedBy, string? elevatedAccessToken = null)
     {
-        try
+        if (accessTokenTsc is null)
         {
-            var access_token_BeforeLockValue = await tokenProvider.GetAccessToken();
-            await semaphore.WaitAsync();
-            var access_token_AfterLockValue = await tokenProvider.GetAccessToken();
-            if (access_token_BeforeLockValue != access_token_AfterLockValue)
-                return access_token_AfterLockValue; // It was renewed by a concurrent refresh token request.
+            accessTokenTsc = new();
+            _ = RefreshTokenImplementation();
+        }
+
+        return accessTokenTsc.Task;
+
+        async Task RefreshTokenImplementation()
+        {
             authLogger.LogInformation("Refreshing access token requested by {RequestedBy}", requestedBy);
             try
             {
-                string? refresh_token = await storageService.GetItem("refresh_token");
-                if (string.IsNullOrEmpty(refresh_token))
+                string? refreshToken = await storageService.GetItem("refresh_token");
+                if (string.IsNullOrEmpty(refreshToken))
                     throw new UnauthorizedException(localizer[nameof(AppStrings.YouNeedToSignIn)]);
 
-                var refreshTokenResponse = await identityController.Refresh(new() { RefreshToken = refresh_token }, cancellationToken);
+                var refreshTokenResponse = await identityController.Refresh(new() { RefreshToken = refreshToken, ElevatedAccessToken = elevatedAccessToken }, default);
                 await StoreTokens(refreshTokenResponse);
-                return refreshTokenResponse.AccessToken!;
+                accessTokenTsc.SetResult(refreshTokenResponse.AccessToken!);
             }
             catch (Exception exp)
             {
-                if (exp is UnauthorizedException)
-                {
-                    // refresh_token is either invalid or expired.
-                    await ClearTokens();
-                }
-                exceptionHandler.Handle(exp, new()
+                exceptionHandler.Handle(exp, parameters: new()
                 {
                     { "AdditionalData", "Refreshing access token failed." },
                     { "RefreshTokenRequestedBy", requestedBy }
                 });
-                return null;
+
+                if (exp is UnauthorizedException) // refresh token is also invalid.
+                {
+                    await ClearTokens();
+                }
+
+                accessTokenTsc.SetResult(null);
             }
-        }
-        finally
-        {
-            semaphore.Release();
+            finally
+            {
+                accessTokenTsc = null;
+            }
         }
     }
 
@@ -133,15 +148,43 @@ public partial class AuthenticationManager : AuthenticationStateProvider
     {
         try
         {
-            var access_token = await prerenderStateService.GetValue(() => tokenProvider.GetAccessToken());
+            var accessToken = await prerenderStateService.GetValue(() => tokenProvider.GetAccessToken());
 
-            return new AuthenticationState(tokenProvider.ParseAccessToken(access_token, validateExpiry: false));
+            return new AuthenticationState(tokenProvider.ParseAccessToken(accessToken, validateExpiry: false));
         }
         catch (Exception exp)
         {
             exceptionHandler.Handle(exp); // Do not throw exceptions in GetAuthenticationStateAsync. This will fault CascadingAuthenticationState's state unless NotifyAuthenticationStateChanged is called again.
             return new AuthenticationState(tokenProvider.Anonymous());
         }
+    }
+
+    public async Task<bool> TryEnterElevatedAccessMode(CancellationToken cancellationToken)
+    {
+        var user = tokenProvider.ParseAccessToken(await tokenProvider.GetAccessToken(), validateExpiry: true);
+        var hasElevatedAccess = await authorizationService.AuthorizeAsync(user, AuthPolicies.ELEVATED_ACCESS) is { Succeeded: true };
+        if (hasElevatedAccess)
+            return true;
+
+        try
+        {
+            await userController.SendElevatedAccessToken(cancellationToken);
+        }
+        catch (TooManyRequestsExceptions exp)
+        {
+            exceptionHandler.Handle(exp, nonInterrupting: true); // Let's show prompt anyway.
+        }
+
+        var token = await promptService.Show(localizer[AppStrings.EnterElevatedAccessToken], title: "Bit.TemplatePlayground", otpInput: true);
+        if (string.IsNullOrEmpty(token))
+            return false;
+
+        if (accessTokenTsc != null)
+        {
+            await accessTokenTsc.Task; // Wait for any ongoing token refresh to complete.
+        }
+        var accessToken = await RefreshToken(requestedBy: "RequestElevatedAccess", token);
+        return string.IsNullOrEmpty(accessToken) is false;
     }
 
     private async Task ClearTokens()
@@ -153,5 +196,10 @@ public partial class AuthenticationManager : AuthenticationStateProvider
             await cookie.Remove("access_token");
         }
         NotifyAuthenticationStateChanged(Task.FromResult(await GetAuthenticationStateAsync()));
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        unsubscribe?.Invoke();
     }
 }

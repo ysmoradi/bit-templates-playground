@@ -1,5 +1,5 @@
-﻿using Bit.TemplatePlayground.Shared.Controllers.Identity;
-using Bit.TemplatePlayground.Shared.Dtos.Identity;
+﻿using Bit.TemplatePlayground.Shared.Dtos.Identity;
+using Bit.TemplatePlayground.Shared.Controllers.Identity;
 
 namespace Bit.TemplatePlayground.Client.Core.Components.Pages.Authorized.Settings;
 
@@ -7,7 +7,6 @@ public partial class ProfileSection
 {
     [Parameter] public bool Loading { get; set; }
     [Parameter] public UserDto? User { get; set; }
-
 
     [AutoInject] private IUserController userController = default!;
 
@@ -17,17 +16,18 @@ public partial class ProfileSection
     private string? profileImageUrl;
     private string? profileImageUploadUrl;
     private string? removeProfileImageHttpUrl;
+    private BitFileUpload fileUploadRef = default!;
     private readonly EditUserDto editUserDto = new();
 
 
     protected override async Task OnInitAsync()
     {
-        var access_token = await PrerenderStateService.GetValue(AuthTokenProvider.GetAccessToken);
+        var accessToken = await PrerenderStateService.GetValue(AuthTokenProvider.GetAccessToken);
 
-        removeProfileImageHttpUrl = $"api/Attachment/RemoveProfileImage?access_token={access_token}";
+        removeProfileImageHttpUrl = $"api/Attachment/RemoveProfileImage?access_token={accessToken}";
 
-        profileImageUrl = new Uri(AbsoluteServerAddress, $"/api/Attachment/GetProfileImage?access_token={access_token}").ToString();
-        profileImageUploadUrl = new Uri(AbsoluteServerAddress, $"/api/Attachment/UploadProfileImage?access_token={access_token}").ToString();
+        profileImageUrl = new Uri(AbsoluteServerAddress, $"/api/Attachment/GetProfileImage?access_token={accessToken}").ToString();
+        profileImageUploadUrl = new Uri(AbsoluteServerAddress, $"/api/Attachment/UploadProfileImage?access_token={accessToken}").ToString();
 
         await base.OnInitAsync();
     }
@@ -69,6 +69,7 @@ public partial class ProfileSection
     private async Task RemoveProfileImage()
     {
         if (isSaving || User is null) return;
+        isSaving = true;
 
         try
         {
@@ -81,6 +82,10 @@ public partial class ProfileSection
         catch (KnownException e)
         {
             SnackBarService.Error(e.Message);
+        }
+        finally
+        {
+            isSaving = false;
         }
     }
 

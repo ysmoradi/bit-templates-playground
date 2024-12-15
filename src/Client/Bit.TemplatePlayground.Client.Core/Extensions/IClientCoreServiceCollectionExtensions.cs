@@ -27,14 +27,25 @@ public static partial class IClientCoreServiceCollectionExtensions
         // To address this, we use the AddSessioned extension method.
         // AddSessioned applies AddSingleton in BlazorHybrid and AddScoped in Blazor WebAssembly and Blazor Server, ensuring correct service lifetimes for each environment.
         services.AddSessioned<PubSubService>();
+        services.AddSessioned<PromptService>();
         services.AddSessioned<SnackBarService>();
         services.AddSessioned<MessageBoxService>();
         services.AddSessioned<ILocalHttpServer, NoopLocalHttpServer>();
         services.AddSessioned<ITelemetryContext, AppTelemetryContext>();
-        services.AddSessioned<AuthenticationStateProvider, AuthenticationManager>();
-        services.AddSessioned(sp => (AuthenticationManager)sp.GetRequiredService<AuthenticationStateProvider>());
+        services.AddSessioned<AuthenticationStateProvider>(sp =>
+        {
+            var authenticationStateProvider = ActivatorUtilities.CreateInstance<AuthManager>(sp);
+            authenticationStateProvider.OnInit();
+            return authenticationStateProvider;
+        });
+        services.AddSessioned(sp => (AuthManager)sp.GetRequiredService<AuthenticationStateProvider>());
 
-        services.AddSingleton(sp => configuration.Get<ClientCoreSettings>()!);
+        services.AddSingleton(sp =>
+        {
+            ClientCoreSettings settings = new();
+            configuration.Bind(settings);
+            return settings;
+        });
 
         services.AddOptions<ClientCoreSettings>()
             .Bind(configuration)
@@ -43,6 +54,7 @@ public static partial class IClientCoreServiceCollectionExtensions
 
         services.AddBitButilServices();
         services.AddBitBlazorUIServices();
+        services.AddBitBlazorUIExtrasServices(trySingleton: AppPlatform.IsBlazorHybrid);
 
         // This code constructs a chain of HTTP message handlers. By default, it uses `HttpClientHandler` 
         // to send requests to the server. However, you can replace `HttpClientHandler` with other HTTP message 
@@ -50,7 +62,7 @@ public static partial class IClientCoreServiceCollectionExtensions
         services.AddScoped<HttpMessageHandlersChainFactory>(serviceProvider => transportHandler =>
         {
             var constructedHttpMessageHandler = ActivatorUtilities.CreateInstance<LoggingDelegatingHandler>(serviceProvider,
-                        [ActivatorUtilities.CreateInstance<RequestHeadersDelegationHandler>(serviceProvider,
+                        [ActivatorUtilities.CreateInstance<RequestHeadersDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<AuthDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<RetryDelegatingHandler>(serviceProvider,
                         [ActivatorUtilities.CreateInstance<ExceptionDelegatingHandler>(serviceProvider, [transportHandler])])])])]);
@@ -58,9 +70,8 @@ public static partial class IClientCoreServiceCollectionExtensions
         });
         services.AddScoped<AuthDelegatingHandler>();
         services.AddScoped<RetryDelegatingHandler>();
-        services.AddScoped<LoggingDelegatingHandler>();
         services.AddScoped<ExceptionDelegatingHandler>();
-        services.AddScoped<RequestHeadersDelegationHandler>();
+        services.AddScoped<RequestHeadersDelegatingHandler>();
         services.AddScoped(serviceProvider =>
         {
             var transportHandler = serviceProvider.GetRequiredService<HttpClientHandler>();
@@ -71,6 +82,7 @@ public static partial class IClientCoreServiceCollectionExtensions
 
 
         services.AddTypedHttpClients();
+
 
         return services;
     }

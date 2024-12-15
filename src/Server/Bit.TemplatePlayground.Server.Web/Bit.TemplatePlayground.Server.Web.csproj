@@ -2,13 +2,15 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <UserSecretsId>24A429BE-721E-4083-B988-0642D2427F70</UserSecretsId>
+        <UserSecretsId>B7BD276A-F13E-4C75-9E25-2AA0404C907D</UserSecretsId>
         <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
     </PropertyGroup>
-
+    
     <ItemGroup>
+        <PackageReference Include="NWebsec.AspNetCore.Middleware" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,10 +1,9 @@
-﻿using Bit.TemplatePlayground.Server.Api.SignalR;
-using Bit.TemplatePlayground.Shared.Dtos.Products;
+﻿using Bit.TemplatePlayground.Shared.Dtos.Products;
 using Bit.TemplatePlayground.Shared.Controllers.Products;
 
 namespace Bit.TemplatePlayground.Server.Api.Controllers.Products;
 
-[ApiController, Route("api/[controller]/[action]")]
+[ApiController, Route("api/[controller]/[action]"), Authorize(Policy = AuthPolicies.PRIVILEGED_ACCESS)]
 public partial class ProductController : AppControllerBase, IProductController
 {
 

@@ -2,20 +2,27 @@
 
 namespace Bit.TemplatePlayground.Client.Core.Services.HttpMessageHandlers;
 
-public partial class ExceptionDelegatingHandler(IStringLocalizer<AppStrings> localizer,
-                                                PubSubService pubSubService,
+public partial class ExceptionDelegatingHandler(PubSubService pubSubService,
+                                                IStringLocalizer<AppStrings> localizer,
                                                 JsonSerializerOptions jsonSerializerOptions,
                                                 AbsoluteServerAddressProvider absoluteServerAddress,
                                                 HttpMessageHandler handler) : DelegatingHandler(handler)
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        var logScopeData = (Dictionary<string, object?>)request.Options.GetValueOrDefault(RequestOptionNames.LogScopeData)!;
+
         bool serverCommunicationSuccess = false;
         var isInternalRequest = request.RequestUri!.ToString().StartsWith(absoluteServerAddress, StringComparison.InvariantCultureIgnoreCase);
 
         try
         {
             var response = await base.SendAsync(request, cancellationToken);
+            if (response.Headers.TryGetValues("Request-Id", out var requestId))
+            {
+                logScopeData["RequestId"] = requestId.First();
+            }
+            logScopeData["HttpStatusCode"] = response.StatusCode;
 
             serverCommunicationSuccess = true;
 
@@ -50,12 +57,15 @@ public partial class ExceptionDelegatingHandler(IStringLocalizer<AppStrings> loc
 
             response.EnsureSuccessStatusCode();
 
+            request.Options.Set(new(RequestOptionNames.LogLevel), LogLevel.Information);
+
             return response;
         }
         catch (Exception exp) when ((exp is HttpRequestException && serverCommunicationSuccess is false)
             || exp is TaskCanceledException tcExp && tcExp.InnerException is TimeoutException
             || exp is HttpRequestException { StatusCode: HttpStatusCode.BadGateway or HttpStatusCode.GatewayTimeout or HttpStatusCode.ServiceUnavailable })
         {
+            serverCommunicationSuccess = false; // Let's treat the server communication as failed if an exception is caught here.
             throw new ServerConnectionException(localizer[nameof(AppStrings.ServerConnectionException)], exp);
         }
         finally

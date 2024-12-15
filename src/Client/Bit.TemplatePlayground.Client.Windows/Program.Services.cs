@@ -26,19 +26,23 @@ public static partial class Program
         services.AddSingleton(sp => configuration);
         services.AddSingleton<IStorageService, WindowsStorageService>();
         services.AddSingleton<ILocalHttpServer, WindowsLocalHttpServer>();
-        services.AddSingleton(sp => configuration.Get<ClientWindowsSettings>()!);
+        ClientWindowsSettings settings = new();
+        configuration.Bind(settings);
+        services.AddSingleton(sp =>
+        {
+            return settings;
+        });
         services.AddSingleton(ITelemetryContext.Current!);
 
-        services.AddWpfBlazorWebView();
+        services.AddWindowsFormsBlazorWebView();
         services.AddBlazorWebViewDeveloperTools();
 
         services.AddLogging(loggingBuilder =>
         {
-            loggingBuilder.ConfigureLoggers();
-            loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+            loggingBuilder.ConfigureLoggers(configuration);
             loggingBuilder.AddEventSourceLogger();
 
-            loggingBuilder.AddEventLog();
+            loggingBuilder.AddEventLog(options => configuration.GetRequiredSection("Logging:EventLog").Bind(options));
         });
 
         services.AddOptions<ClientWindowsSettings>()

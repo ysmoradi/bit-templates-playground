@@ -31,8 +31,9 @@ public partial class SignInPage : IDisposable
 
 
     private bool isWaiting;
-    private bool isOtpRequested;
+    private bool isOtpSent;
     private bool requiresTwoFactor;
+    private SignInPanelTab currentSignInPanelTab;
     private readonly SignInRequestDto model = new();
     private Action unsubscribeIdentityHeaderBackLinkClicked = default!;
 
@@ -48,7 +49,6 @@ public partial class SignInPage : IDisposable
         model.UserName = UserNameQueryString;
         model.Email = EmailQueryString;
         model.PhoneNumber = PhoneNumberQueryString;
-        model.DeviceInfo = telemetryContext.OS;
 
         if (string.IsNullOrEmpty(OtpQueryString) is false)
         {
@@ -74,7 +74,7 @@ public partial class SignInPage : IDisposable
 
             if (source == OtpPayload)
             {
-                isOtpRequested = false;
+                isOtpSent = false;
                 model.Otp = null;
             }
 
@@ -110,7 +110,7 @@ public partial class SignInPage : IDisposable
     private async Task DoSignIn()
     {
         if (isWaiting) return;
-        if (isOtpRequested && string.IsNullOrWhiteSpace(model.Otp)) return;
+        if (isOtpSent && string.IsNullOrWhiteSpace(model.Otp)) return;
 
         isWaiting = true;
 
@@ -118,7 +118,11 @@ public partial class SignInPage : IDisposable
         {
             if (requiresTwoFactor && string.IsNullOrWhiteSpace(model.TwoFactorCode)) return;
 
-            requiresTwoFactor = await AuthenticationManager.SignIn(model, CurrentCancellationToken);
+            CleanModel();
+
+            model.DeviceInfo = telemetryContext.Platform;
+
+            requiresTwoFactor = await AuthManager.SignIn(model, CurrentCancellationToken);
 
             if (requiresTwoFactor is false)
             {
@@ -139,41 +143,51 @@ public partial class SignInPage : IDisposable
         }
     }
 
-    private Task ResendOtp() => SendOtp(true);
-    private Task SendOtp() => SendOtp(false);
-
     private async Task SendOtp(bool resend)
     {
-        if (model.Email is null && model.PhoneNumber is null) return;
-
-        if (model.Email is not null && new EmailAddressAttribute().IsValid(model.Email) is false)
+        try
         {
-            SnackBarService.Error(string.Format(AppStrings.EmailAddressAttribute_ValidationError, AppStrings.Email));
-            return;
-        }
+            CleanModel();
 
-        if (model.PhoneNumber is not null && new PhoneAttribute().IsValid(model.PhoneNumber) is false)
+            if (model.Email is null && model.PhoneNumber is null) return;
+
+            if (model.Email is not null && new EmailAddressAttribute().IsValid(model.Email) is false)
+            {
+                SnackBarService.Error(string.Format(AppStrings.EmailAddressAttribute_ValidationError, AppStrings.Email));
+                return;
+            }
+
+            if (model.PhoneNumber is not null && new PhoneAttribute().IsValid(model.PhoneNumber) is false)
+            {
+                SnackBarService.Error(string.Format(AppStrings.PhoneAttribute_ValidationError, AppStrings.PhoneNumber));
+                return;
+            }
+
+            var request = new IdentityRequestDto { UserName = model.UserName, Email = model.Email, PhoneNumber = model.PhoneNumber };
+
+            await identityController.SendOtp(request, ReturnUrlQueryString, CurrentCancellationToken);
+
+            if (resend is false)
+            {
+                isOtpSent = true;
+
+                PubSubService.Publish(ClientPubSubMessages.UPDATE_IDENTITY_HEADER_BACK_LINK, OtpPayload);
+            }
+        }
+        catch (KnownException e)
         {
-            SnackBarService.Error(string.Format(AppStrings.PhoneAttribute_ValidationError, AppStrings.PhoneNumber));
-            return;
+            SnackBarService.Error(e.Message);
         }
-
-        var request = new IdentityRequestDto { UserName = model.UserName, Email = model.Email, PhoneNumber = model.PhoneNumber };
-
-        if (resend is false)
-        {
-            isOtpRequested = true;
-
-            PubSubService.Publish(ClientPubSubMessages.UPDATE_IDENTITY_HEADER_BACK_LINK, OtpPayload);
-        }
-
-        await identityController.SendOtp(request, ReturnUrlQueryString, CurrentCancellationToken);
     }
+    private Task ResendOtp() => SendOtp(true);
+    private Task SendOtp() => SendOtp(false);
 
     private async Task SendTfaToken()
     {
         try
         {
+            CleanModel();
+
             await identityController.SendTwoFactorToken(model, CurrentCancellationToken);
 
             SnackBarService.Success(Localizer[nameof(AppStrings.TfaTokenSentMessage)]);
@@ -181,6 +195,24 @@ public partial class SignInPage : IDisposable
         catch (KnownException e)
         {
             SnackBarService.Error(e.Message);
+        }
+    }
+
+    private void HandleOnSignInPanelTabChange(SignInPanelTab tab)
+    {
+        currentSignInPanelTab = tab;
+    }
+
+    private void CleanModel()
+    {
+        if (currentSignInPanelTab is SignInPanelTab.Email)
+        {
+            model.PhoneNumber = null;
+        }
+
+        if (currentSignInPanelTab is SignInPanelTab.Phone)
+        {
+            model.Email = null;
         }
     }
 

@@ -11,8 +11,10 @@ public static class ILoggingBuilderExtensions
         return builder;
     }
 
-    public static ILoggingBuilder ConfigureLoggers(this ILoggingBuilder loggingBuilder)
+    public static ILoggingBuilder ConfigureLoggers(this ILoggingBuilder loggingBuilder, IConfiguration configuration)
     {
+        loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+
         if (AppEnvironment.IsDev())
         {
             loggingBuilder.AddDebug();
@@ -20,10 +22,11 @@ public static class ILoggingBuilderExtensions
 
         if (!AppPlatform.IsBrowser) // Browser has its own WebAssemblyConsoleLoggerProvider.
         {
-            loggingBuilder.AddConsole(); // Device Log / logcat
+            loggingBuilder.AddConsole(options => configuration.GetRequiredSection("Logging:Console").Bind(options)); // Device Log / logcat
         }
 
         loggingBuilder.AddDiagnosticLogger();
+
 
         return loggingBuilder;
     }
