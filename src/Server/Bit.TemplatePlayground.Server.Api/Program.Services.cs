@@ -29,7 +29,9 @@ public static partial class Program
         var env = builder.Environment;
         var services = builder.Services;
         var configuration = builder.Configuration;
-        var appSettings = configuration.Get<ServerApiSettings>()!;
+
+        ServerApiSettings appSettings = new();
+        configuration.Bind(appSettings);
 
         services.AddScoped<EmailService>();
         services.AddScoped<PhoneService>();
@@ -73,7 +75,10 @@ public static partial class Program
                     policy.SetPreflightMaxAge(TimeSpan.FromDays(1)); // https://stackoverflow.com/a/74184331
                 }
 
-                var webClientUrl = configuration.Get<ServerApiSettings>()!.WebClientUrl;
+                ServerApiSettings settings = new();
+                configuration.Bind(settings);
+
+                var webClientUrl = settings.WebClientUrl;
 
                 policy.SetIsOriginAllowed(origin =>
                             AllowedOriginsRegex().IsMatch(origin) ||
@@ -127,7 +132,12 @@ public static partial class Program
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton(sp => configuration.Get<ServerApiSettings>()!);
+        services.AddSingleton(sp =>
+        {
+            ServerApiSettings settings = new();
+            configuration.Bind(settings);
+            return settings;
+        });
 
         services.AddEndpointsApiExplorer();
 
@@ -179,7 +189,8 @@ public static partial class Program
         var services = builder.Services;
         var configuration = builder.Configuration;
         var env = builder.Environment;
-        var appSettings = configuration.Get<ServerApiSettings>()!;
+        ServerApiSettings appSettings = new();
+        configuration.Bind(appSettings);
         var identityOptions = appSettings.Identity;
 
         var certificatePath = Path.Combine(AppContext.BaseDirectory, "DataProtectionCertificate.pfx");
@@ -210,9 +221,6 @@ public static partial class Program
         })
         .AddBearerToken(IdentityConstants.BearerScheme, options =>
         {
-            options.BearerTokenExpiration = identityOptions.BearerTokenExpiration;
-            options.RefreshTokenExpiration = identityOptions.RefreshTokenExpiration;
-
             var validationParameters = new TokenValidationParameters
             {
                 ClockSkew = TimeSpan.Zero,
@@ -240,19 +248,20 @@ public static partial class Program
             {
                 OnMessageReceived = async context =>
                 {
-                    // The server accepts the access_token from either the authorization header, the cookie, or the request URL query string
+                    // The server accepts the accessToken from either the authorization header, the cookie, or the request URL query string
                     context.Token ??= context.Request.Query.ContainsKey("access_token") ? context.Request.Query["access_token"] : context.Request.Cookies["access_token"];
                 }
             };
+
+            configuration.GetRequiredSection("Identity").Bind(options);
         });
 
         if (string.IsNullOrEmpty(configuration["Authentication:Google:ClientId"]) is false)
         {
             authenticationBuilder.AddGoogle(options =>
             {
-                options.ClientId = configuration["Authentication:Google:ClientId"]!;
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                configuration.GetRequiredSection("Authentication:Google").Bind(options);
             });
         }
 
@@ -260,9 +269,8 @@ public static partial class Program
         {
             authenticationBuilder.AddGitHub(options =>
             {
-                options.ClientId = configuration["Authentication:GitHub:ClientId"]!;
-                options.ClientSecret = configuration["Authentication:GitHub:ClientSecret"]!;
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                configuration.GetRequiredSection("Authentication:GitHub").Bind(options);
             });
         }
 
@@ -270,10 +278,21 @@ public static partial class Program
         {
             authenticationBuilder.AddTwitter(options =>
             {
-                options.ConsumerKey = configuration["Authentication:Twitter:ConsumerKey"]!;
-                options.ConsumerSecret = configuration["Authentication:Twitter:ConsumerSecret"]!;
                 options.RetrieveUserDetails = true;
                 options.SignInScheme = IdentityConstants.ExternalScheme;
+                configuration.GetRequiredSection("Authentication:Twitter").Bind(options);
+            });
+        }
+
+        if (string.IsNullOrEmpty(configuration["Authentication:Apple:ClientId"]) is false)
+        {
+            authenticationBuilder.AddApple(options =>
+            {
+                options.UsePrivateKey(keyId =>
+                {
+                    return env.ContentRootFileProvider.GetFileInfo("AppleAuthKey.p8");
+                });
+                configuration.GetRequiredSection("Authentication:Apple").Bind(options);
             });
         }
 

@@ -1,4 +1,4 @@
-﻿// bit version: 9.0.0
+﻿// bit version: 9.1.0
 // https://github.com/bitfoundation/bitplatform/tree/develop/src/Bswup
 
 
@@ -6,7 +6,10 @@ self.assetsInclude = [];
 self.assetsExclude = [
     /bit\.blazorui\.fluent\.css$/,
     /bit\.blazorui\.fluent-dark\.css$/,
-    /bit\.blazorui\.fluent-light\.css$/
+    /bit\.blazorui\.fluent-light\.css$/,
+    // If a PDF viewer is needed in the PWA, remove these two lines:
+    /pdfjs-4\.7\.76\.js$/,
+    /pdfjs-4\.7\.76-worker\.js$/
 ];
 self.externalAssets = [
     {

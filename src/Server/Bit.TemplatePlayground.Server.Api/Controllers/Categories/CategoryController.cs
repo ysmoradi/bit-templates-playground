@@ -1,10 +1,9 @@
-﻿using Bit.TemplatePlayground.Server.Api.SignalR;
-using Bit.TemplatePlayground.Shared.Dtos.Categories;
+﻿using Bit.TemplatePlayground.Shared.Dtos.Categories;
 using Bit.TemplatePlayground.Shared.Controllers.Categories;
 
 namespace Bit.TemplatePlayground.Server.Api.Controllers.Categories;
 
-[ApiController, Route("api/[controller]/[action]")]
+[ApiController, Route("api/[controller]/[action]"), Authorize(Policy = AuthPolicies.PRIVILEGED_ACCESS)]
 public partial class CategoryController : AppControllerBase, ICategoryController
 {
 

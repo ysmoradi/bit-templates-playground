@@ -12,6 +12,8 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = default!;
 
+    public DbSet<UserSession> UserSessions { get; set; } = default!;
+
     public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Product> Products { get; set; } = default!;
 
@@ -83,6 +85,5 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<IdentityUserClaim<Guid>>()
             .ToTable("UserClaims");
     }
-
 
 }

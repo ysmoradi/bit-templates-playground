@@ -1,4 +1,5 @@
-﻿namespace Bit.TemplatePlayground.Server.Api.Models.Identity;
+﻿
+namespace Bit.TemplatePlayground.Server.Api.Models.Identity;
 
 public partial class User : IdentityUser<Guid>
 {
@@ -16,9 +17,6 @@ public partial class User : IdentityUser<Guid>
     [PersonalData]
     public string? ProfileImageName { get; set; }
 
-    [PersonalData]
-    public List<UserSession> Sessions { get; set; } = [];
-
     /// <summary>
     /// The date and time of the last token request. Ensures the generated token is valid and can only be used once.
     /// </summary>
@@ -31,4 +29,12 @@ public partial class User : IdentityUser<Guid>
     public DateTimeOffset? TwoFactorTokenRequestedOn { get; set; }
 
     public DateTimeOffset? OtpRequestedOn { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="AuthPolicies.ELEVATED_ACCESS" />
+    /// </summary>
+    public DateTimeOffset? ElevatedAccessTokenRequestedOn { get; set; }
+
+    public List<UserSession> Sessions { get; set; } = [];
+
 }

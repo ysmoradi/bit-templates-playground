@@ -29,12 +29,6 @@ public partial class UserConfiguration : IEntityTypeConfiguration<User>
             PasswordHash = "AQAAAAIAAYagAAAAEP0v3wxkdWtMkHA3Pp5/JfS+42/Qto9G05p2mta6dncSK37hPxEHa3PGE4aqN30Aag==", // 123456
         }]);
 
-        builder.Property(u => u.Sessions)
-               .HasConversion(v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-                              v => JsonSerializer.Deserialize<List<UserSession>>(v, (JsonSerializerOptions?)null)!);
-        // You can also use builder.OwnsMany(u => u.Sessions, navBuilder => navBuilder.ToJson());
-
-
         builder
             .HasIndex(b => b.Email)
             .HasFilter($"[{nameof(User.Email)}] IS NOT NULL")

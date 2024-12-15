@@ -1,9 +1,12 @@
-﻿namespace Bit.TemplatePlayground.Client.Windows.Services;
+﻿using Bit.TemplatePlayground.Client.Core.Styles;
+
+namespace Bit.TemplatePlayground.Client.Windows.Services;
 
 public partial class WindowsDeviceCoordinator : IBitDeviceCoordinator
 {
     public async Task ApplyTheme(bool isDark)
     {
-        App.Current.ThemeMode = isDark ? System.Windows.ThemeMode.Dark : System.Windows.ThemeMode.Light;
+        Application.SetColorMode(isDark ? SystemColorMode.Dark : SystemColorMode.Classic);
+        Application.OpenForms[0]!.FormCaptionBackColor = ColorTranslator.FromHtml(isDark ? ThemeColors.PrimaryDarkBgColor : ThemeColors.PrimaryLightBgColor);
     }
 }

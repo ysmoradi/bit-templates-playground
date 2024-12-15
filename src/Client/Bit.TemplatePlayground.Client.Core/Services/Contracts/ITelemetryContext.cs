@@ -1,4 +1,6 @@
-﻿namespace Bit.TemplatePlayground.Client.Core.Services.Contracts;
+﻿using Bit.TemplatePlayground.Client.Core.Components;
+
+namespace Bit.TemplatePlayground.Client.Core.Services.Contracts;
 
 public interface ITelemetryContext
 {
@@ -31,7 +33,7 @@ public interface ITelemetryContext
 
     public Guid AppSessionId { get; set; }
 
-    public string? OS { get; set; }
+    public string? Platform { get; set; }
 
     public string? AppVersion { get; set; }
     public string? WebView { get; set; }
@@ -45,6 +47,9 @@ public interface ITelemetryContext
 
     public string? Environment { get; set; }
 
+    /// <summary>
+    /// <inheritdoc cref="Parameters.IsOnline"/>
+    /// </summary>
     public bool? IsOnline { get; set; }
 
     public Dictionary<string, object?> ToDictionary(Dictionary<string, object?>? additionalParameters = null)
@@ -54,7 +59,7 @@ public interface ITelemetryContext
             { nameof(UserId), UserId },
             { nameof(UserSessionId), UserSessionId },
             { nameof(AppSessionId), AppSessionId },
-            { nameof(OS), OS },
+            { nameof(Platform), Platform },
             { nameof(AppVersion), AppVersion },
             { nameof(PageUrl), PageUrl },
             { nameof(UserAgent), UserAgent },

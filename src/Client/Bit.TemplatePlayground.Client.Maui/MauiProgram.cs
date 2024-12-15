@@ -14,7 +14,13 @@ public static partial class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
-        
+        AppDomain.CurrentDomain.UnhandledException += (_, e) => LogException(e.ExceptionObject, reportedBy: nameof(AppDomain.UnhandledException));
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            LogException(e.Exception, nameof(TaskScheduler.UnobservedTaskException));
+            e.SetObserved();
+        };
+
         AppPlatform.IsBlazorHybrid = true;
 #if iOS
         AppPlatform.IsIosOnMacOS = NSProcessInfo.ProcessInfo.IsiOSApplicationOnMac;
@@ -23,7 +29,7 @@ public static partial class MauiProgram
 
         var builder = MauiApp.CreateBuilder();
 
-        builder
+                builder
             .UseMauiApp<App>()
             .Configuration.AddClientConfigurations(clientEntryAssemblyName: "Bit.TemplatePlayground.Client.Maui");
 
@@ -166,4 +172,19 @@ public static partial class MauiProgram
         }
     }
 #endif
+
+    private static void LogException(object? error, string reportedBy)
+    {
+        if (IPlatformApplication.Current?.Services is IServiceProvider services && error is Exception exp)
+        {
+            services.GetRequiredService<IExceptionHandler>().Handle(exp, parameters: new()
+            {
+                { nameof(reportedBy), reportedBy }
+            }, nonInterrupting: true);
+        }
+        else
+        {
+            _ = Console.Error.WriteLineAsync(error?.ToString() ?? "Unknown error");
+        }
+    }
 }

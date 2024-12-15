@@ -21,13 +21,15 @@ public static partial class Program
         var configuration = app.Configuration;
         var env = app.Environment;
 
-        var forwarededHeadersOptions = configuration.Get<ServerWebSettings>()!.ForwardedHeaders;
+        ServerWebSettings settings = new();
+        configuration.Bind(settings);
+        var forwardedHeadersOptions = settings.ForwardedHeaders;
 
-        if (forwarededHeadersOptions is not null
-            && (app.Environment.IsDevelopment() || forwarededHeadersOptions.AllowedHosts.Any()))
+        if (forwardedHeadersOptions is not null
+            && (app.Environment.IsDevelopment() || forwardedHeadersOptions.AllowedHosts.Any()))
         {
             // If the list is empty then all hosts are allowed. Failing to restrict this these values may allow an attacker to spoof links generated for reset password etc.
-            app.UseForwardedHeaders(forwarededHeadersOptions);
+            app.UseForwardedHeaders(forwardedHeadersOptions);
         }
 
         if (CultureInfoManager.MultilingualEnabled)
@@ -54,8 +56,11 @@ public static partial class Program
         {
             app.UseHttpsRedirection();
             app.UseResponseCompression();
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
             app.UseHsts();
+            app.UseXContentTypeOptions();
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+            app.UseXfo(options => options.SameOrigin());
         }
 
         app.UseResponseCaching();
@@ -78,8 +83,9 @@ public static partial class Program
                     {
                         context.Response.GetTypedHeaders().CacheControl = new()
                         {
-                            MaxAge = TimeSpan.FromDays(7),
-                            Public = true
+                            Public = true,
+                            NoTransform = true,
+                            MaxAge = TimeSpan.FromDays(7)
                         };
                     });
                 }
@@ -132,9 +138,7 @@ public static partial class Program
             .AddInteractiveWebAssemblyRenderMode()
             .AddAdditionalAssemblies(AssemblyLoadContext.Default.Assemblies.Where(asm => asm.GetName().Name?.Contains("Bit.TemplatePlayground.Client") is true).ToArray());
 
-        var webAppRenderMode = configuration.Get<ServerWebSettings>()!;
-
-        if (webAppRenderMode.WebAppRender.PrerenderEnabled is false)
+        if (settings.WebAppRender.PrerenderEnabled is false)
         {
             blazorApp.AllowAnonymous(); // Server may not check authorization for pages when there's no pre rendering, let the client handle it.
         }
